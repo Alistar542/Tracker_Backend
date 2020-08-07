@@ -122,6 +122,7 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(req.body.courseInterested);
   queryUpdateValues.push(convertToMySqlDateTime(req.body.followUpDate));
   queryUpdateValues.push(req.body.priority);
+  queryUpdateValues.push(req.body.status);
   queryUpdateValues.push(req.params.id);
 
   connection.query(queryPrefix, queryUpdateValues, (err, rows) => {
