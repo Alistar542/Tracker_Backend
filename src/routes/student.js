@@ -23,6 +23,13 @@ router.route("/add").post((req, res) => {
   studentQueryInsertValues.push(convertToMySqlDateTime(req.body.followUpDate));
   studentQueryInsertValues.push(req.body.status);
   studentQueryInsertValues.push(req.body.priority);
+  studentQueryInsertValues.push(
+    convertToMySqlDateTime(new Date().toISOString())
+  );
+  studentQueryInsertValues.push("ADMIN");
+  studentQueryInsertValues.push(
+    convertToMySqlDateTime(new Date().toISOString())
+  );
 
   let englishExamQueryPrefix = STUDENT_QUERY.ADD_ENGLISH_EXAM_QUERY;
   let englishExamQueryInsertValues = [];
@@ -123,6 +130,8 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(req.body.followUpDate));
   queryUpdateValues.push(req.body.priority);
   queryUpdateValues.push(req.body.status);
+  queryUpdateValues.push("ADMIN");
+  queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
   connection.query(queryPrefix, queryUpdateValues, (err, rows) => {

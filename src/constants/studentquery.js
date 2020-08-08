@@ -2,20 +2,21 @@ exports.ADD_STUDENT_QUERY =
   "INSERT INTO student " +
   "(firstName,middleName,lastName,email,phoneNumber," +
   "dateOfBirth,gender,maritalStatus,courseInterested," +
-  "followUpDate,status,priority) " +
-  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+  "followUpDate,status,priority,createdDate,lastUpdateUser,lastUpdateTime) " +
+  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 exports.UPDATE_STUDENT_QUERY =
   "UPDATE student SET " +
   "firstName=?,middleName=?,lastName=?,email=?,phoneNumber=?," +
   "dateOfBirth=?,gender=?,maritalStatus=?,courseInterested=?," +
-  "followUpDate=?,priority=?,status=? " +
+  "followUpDate=?,priority=?,status=?,lastUpdateUser=?,lastUpdateTime=? " +
   "WHERE studentId= ?";
 
 exports.FIND_STUDENT_QUERY = `SELECT 
-STD.studentId,STD.firstName,STD.lastName,STD.email,STD.gender,
+STD.studentId,STD.firstName,STD.middleName,STD.lastName,STD.email,STD.gender,
 STD.maritalStatus,STD.courseInterested,STD.status,STD.priority,
-STD.phoneNumber,STD.followUpDate,STD.dateOfBirth 
+STD.phoneNumber,STD.followUpDate,STD.dateOfBirth,STD.createdDate,
+STD.lastUpdateUser,STD.lastUpdateTime  
 FROM student STD 
 LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
 LEFT JOIN education EDU ON STD.studentId=edu.studentId 
