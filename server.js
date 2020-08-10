@@ -8,8 +8,9 @@ app.use(cors());
 app.use(express.json());
 
 const studentRouter = require("./src/routes/student");
-
+const userRouter = require("./src/routes/user");
 app.use("/student", studentRouter);
+app.use("/user", userRouter);
 
 //Dummy test
 app.get("/", (req, res) => {

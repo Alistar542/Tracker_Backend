@@ -26,7 +26,7 @@ router.route("/add").post((req, res) => {
   studentQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
-  studentQueryInsertValues.push("ADMIN");
+  studentQueryInsertValues.push(req.body.lastUpdateUser);
   studentQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
@@ -130,7 +130,7 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(req.body.followUpDate));
   queryUpdateValues.push(req.body.priority);
   queryUpdateValues.push(req.body.status);
-  queryUpdateValues.push("ADMIN");
+  queryUpdateValues.push(req.body.lastUpdateUser);
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
