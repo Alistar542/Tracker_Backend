@@ -1,5 +1,7 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
 const connection = require("../../connection/connection");
 const USER_QUERY = require("../constants/userquery");
 
@@ -19,7 +21,11 @@ router.route("/login").post(async (req, res) => {
     }
     try {
       if (await bcrypt.compare(req.body.password, user.password)) {
-        res.json({ userName: user.userName, userType: user.userType });
+        const userJwt = { userName: user.userName, userType: user.userType };
+        const accessToken = jwt.sign(userJwt, process.env.ACCESS_SECRET_TOKEN);
+        res.json({
+          accessToken: accessToken,
+        });
       } else {
         res.status(403).send("INCORRECT PASSWORD");
       }
