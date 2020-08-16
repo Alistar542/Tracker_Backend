@@ -8,8 +8,11 @@ app.use(express.json());
 
 const studentRouter = require("./src/routes/student");
 const userRouter = require("./src/routes/user");
+const studentHistoryRouter = require("./src/routes/studenthistory");
+
 app.use("/student", authenticateToken, studentRouter);
 app.use("/user", userRouter);
+app.use("/studenthistory", authenticateToken, studentHistoryRouter);
 
 //Dummy test
 app.get("/", (req, res) => {

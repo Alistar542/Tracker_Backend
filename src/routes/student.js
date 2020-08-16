@@ -3,6 +3,7 @@ const connection = require("../../connection/connection");
 const dateUtils = require("../utils/dateutils");
 const textUtils = require("../utils/textutils");
 const STUDENT_QUERY = require("../constants/studentquery");
+const COMMON_CONSTANTS = require("../constants/common");
 
 const convertToLowerCase = textUtils.convertToLowerCase;
 const convertToMySqlDate = dateUtils.convertToMySqlDate;
@@ -66,6 +67,16 @@ router.route("/add").post((req, res) => {
   );
   workExperienceQueryInsertValues.push(req.body.workAddress);
 
+  let studentHistoryQueryPrefix = STUDENT_QUERY.ADD_STUDENT_HISTORY_QUERY;
+  let studentHistoryQueryInsertValues = [];
+  studentHistoryQueryInsertValues[0] = "studentId";
+  studentHistoryQueryInsertValues.push(COMMON_CONSTANTS.OPERATION_FLAG.INSERT);
+  studentHistoryQueryInsertValues.push(null);
+  studentHistoryQueryInsertValues.push("ADMIN");
+  studentHistoryQueryInsertValues.push(
+    convertToMySqlDateTime(new Date().toISOString())
+  );
+
   connection.beginTransaction(function (err) {
     if (err) {
       throw err;
@@ -105,9 +116,31 @@ router.route("/add").post((req, res) => {
                 throw err;
               });
             }
-            return res.json(rows);
           }
         );
+        studentHistoryQueryInsertValues[0] = rows.insertId;
+        console.log("STUDENT HISTORY ID :");
+        console.log(rows.insertId);
+        connection.query(
+          studentHistoryQueryPrefix,
+          studentHistoryQueryInsertValues,
+          (err, rows) => {
+            if (err) {
+              console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
+              return connection.rollback(function () {
+                throw err;
+              });
+            }
+          }
+        );
+        connection.commit(function (err) {
+          if (err) {
+            connection.rollback(function () {
+              throw err;
+            });
+          }
+          return res.json(rows);
+        });
       }
     );
   });
