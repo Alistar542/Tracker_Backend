@@ -9,7 +9,6 @@ router.route("/getstudenthistory").post((req, res) => {
   console.log(req.body.studentId);
   connection.query(queryPrefix, queryConditionValues, (err, rows) => {
     if (err) console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
-    console.log(rows);
     res.json(rows);
   });
 });

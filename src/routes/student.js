@@ -4,6 +4,7 @@ const dateUtils = require("../utils/dateutils");
 const textUtils = require("../utils/textutils");
 const STUDENT_QUERY = require("../constants/studentquery");
 const COMMON_CONSTANTS = require("../constants/common");
+const STUDENT_HISTORY_QUERY = require("../constants/studenthistoryquery");
 
 const convertToLowerCase = textUtils.convertToLowerCase;
 const convertToMySqlDate = dateUtils.convertToMySqlDate;
@@ -67,7 +68,8 @@ router.route("/add").post((req, res) => {
   );
   workExperienceQueryInsertValues.push(req.body.workAddress);
 
-  let studentHistoryQueryPrefix = STUDENT_QUERY.ADD_STUDENT_HISTORY_QUERY;
+  let studentHistoryQueryPrefix =
+    STUDENT_HISTORY_QUERY.ADD_STUDENT_HISTORY_QUERY;
   let studentHistoryQueryInsertValues = [];
   studentHistoryQueryInsertValues[0] = "studentId";
   studentHistoryQueryInsertValues.push(COMMON_CONSTANTS.OPERATION_FLAG.INSERT);
@@ -119,8 +121,6 @@ router.route("/add").post((req, res) => {
           }
         );
         studentHistoryQueryInsertValues[0] = rows.insertId;
-        console.log("STUDENT HISTORY ID :");
-        console.log(rows.insertId);
         connection.query(
           studentHistoryQueryPrefix,
           studentHistoryQueryInsertValues,
@@ -167,8 +167,49 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
-  connection.query(queryPrefix, queryUpdateValues, (err, rows) => {
-    err ? console.log("ERROR CONNECTING TO STUDENT : " + err) : res.json(rows);
+  let studentHistoryQueryPrefix =
+    STUDENT_HISTORY_QUERY.ADD_STUDENT_HISTORY_QUERY;
+  let studentHistoryQueryInsertValues = [];
+  studentHistoryQueryInsertValues.push(req.params.id);
+  studentHistoryQueryInsertValues.push(COMMON_CONSTANTS.OPERATION_FLAG.UPDATE);
+  studentHistoryQueryInsertValues.push(req.body.remarks);
+  studentHistoryQueryInsertValues.push("ADMIN");
+  studentHistoryQueryInsertValues.push(
+    convertToMySqlDateTime(new Date().toISOString())
+  );
+
+  connection.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
+    connection.query(queryPrefix, queryUpdateValues, (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO STUDENT : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+      connection.query(
+        studentHistoryQueryPrefix,
+        studentHistoryQueryInsertValues,
+        (err, rows) => {
+          if (err) {
+            console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
+            return connection.rollback(function () {
+              throw err;
+            });
+          }
+        }
+      );
+      connection.commit(function (err) {
+        if (err) {
+          connection.rollback(function () {
+            throw err;
+          });
+        }
+        return res.json(rows);
+      });
+    });
   });
 });
 

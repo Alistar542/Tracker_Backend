@@ -36,7 +36,3 @@ exports.ADD_WORK_EXPERIENCE_QUERY = `INSERT INTO workexperience
     (studentId,companyName,position,
         endDate,startDate,address) 
         VALUES(?,?,?,?,?,?)`;
-
-exports.ADD_STUDENT_HISTORY_QUERY = `INSERT INTO studenthistory
-(studentId,operationFlag,remarks,lastUpdateUser,lastUpdateTime)
-VALUES(?,?,?,?,?)`;
