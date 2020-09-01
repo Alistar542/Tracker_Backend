@@ -59,3 +59,23 @@ CREATE TABLE `englishexam` (
    PRIMARY KEY (`workId`),
    FOREIGN KEY (`studentId`) REFERENCES student(`studentId`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ 
+ DROP TABLE user;
+ CREATE TABLE `user` (
+   `userId` int NOT NULL AUTO_INCREMENT,
+   `userName` varchar(50) NOT NULL,
+   `password` varchar(100) NOT NULL,
+   `userType` varchar(10) DEFAULT NULL,
+   PRIMARY KEY (`userId`,`userName`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ 
+ DROP TABLE studenthistory;
+ CREATE TABLE `studenthistory` (
+   `historyId` int NOT NULL AUTO_INCREMENT,
+   `studentId` int NOT NULL,
+   `operationFlag` varchar(1) NOT NULL,
+   `remarks` varchar(200) DEFAULT NULL,
+   `lastUpdateUser` varchar(10) DEFAULT NULL,
+   `lastUpdateTime` DATETIME DEFAULT NULL,
+   PRIMARY KEY (`historyId`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
