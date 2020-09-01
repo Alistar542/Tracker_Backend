@@ -13,6 +13,9 @@ CREATE TABLE `student` (
    `followUpDate` DATETIME DEFAULT NULL,
    `status` varchar(1) DEFAULT NULL,
    `priority` varchar(6) DEFAULT NULL,
+   `createdDate` DATETIME DEFAULT NULL,
+   `lastUpdateUser` varchar(50) DEFAULT NULL,
+   `lastUpdateTime` DATETIME DEFAULT NOT NULL,
    PRIMARY KEY (`studentId`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
  
