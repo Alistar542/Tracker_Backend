@@ -19,7 +19,7 @@ STD.phoneNumber,STD.followUpDate,STD.dateOfBirth,STD.createdDate,
 STD.lastUpdateUser,STD.lastUpdateTime  
 FROM student STD 
 LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
-LEFT JOIN education EDU ON STD.studentId=edu.studentId 
+LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
 WHERE 1=1`;
 
 exports.ADD_ENGLISH_EXAM_QUERY = `INSERT INTO englishexam 
