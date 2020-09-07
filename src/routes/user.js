@@ -25,6 +25,8 @@ router.route("/login").post(async (req, res) => {
         const accessToken = jwt.sign(userJwt, process.env.ACCESS_SECRET_TOKEN);
         res.json({
           accessToken: accessToken,
+          userName: user.userName,
+          userType: user.userType,
         });
       } else {
         res.status(403).send("INCORRECT PASSWORD");
