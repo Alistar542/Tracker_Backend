@@ -30,6 +30,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     LEFT JOIN todofollowupremarks REM ON STD.studentId=REM.studentId
     WHERE 1=1`;
 
+
 exports.ADD_ENGLISH_EXAM_QUERY = `INSERT INTO englishexam 
 (studentId,englishExamType,examDate,
     overall,listening,reading,writing,speaking) 
@@ -76,6 +77,6 @@ exports.DELETE_TODO_FOLLOWUP_QUERY=`DELETE FROM todofollowupremarks where studen
 exports.INSERT_TODO_FOLLOWUP_QUERY = `INSERT INTO todofollowupremarks 
       (studentId,toDoFollowUpSerNum,toDoSerNum,followUpSerNum,currentStatus,remarks,remarkType,userName,lastUpdatedTime) 
         VALUES(?,?,?,?,?,?,?,?,?)`;
-        
+
 exports.UPDATE_STUDENT_STATUS=`UPDATE student
 SET status=? WHERE studentId= ?`
