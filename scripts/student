@@ -1,65 +1,56 @@
 DROP TABLE student; 
 CREATE TABLE `student` (
-   `studentId` int NOT NULL AUTO_INCREMENT,
-   `firstName` varchar(45) NOT NULL,
-   `middleName` varchar(45) DEFAULT NULL,
-   `lastName` varchar(45) DEFAULT NULL,
-   `email` varchar(50) DEFAULT NULL,
-   `phoneNumber` BIGINT DEFAULT NULL,
-   `dateOfBirth` DATETIME DEFAULT NULL,
-   `gender` varchar(1) DEFAULT NULL,
-   `maritalStatus` varchar(1) DEFAULT NULL,
-   `courseInterested` varchar(20) DEFAULT NULL,
-   `followUpDate` DATETIME DEFAULT NULL,
-   `status` varchar(1) DEFAULT NULL,
-   `priority` varchar(6) DEFAULT NULL,
-   `createdDate` DATETIME DEFAULT NULL,
-   `lastUpdateUser` varchar(50) DEFAULT NULL,
-   `lastUpdateTime` DATETIME DEFAULT NOT NULL,
-   PRIMARY KEY (`studentId`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- 
+  `studentId` int NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(45) NOT NULL,
+  `middleName` varchar(45) DEFAULT NULL,
+  `lastName` varchar(45) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `phoneNumber` bigint DEFAULT NULL,
+  `dateOfBirth` datetime DEFAULT NULL,
+  `gender` varchar(1) DEFAULT NULL,
+  `maritalStatus` varchar(1) DEFAULT NULL,
+  `courseInterested` varchar(20) DEFAULT NULL,
+  `followUpDate` datetime DEFAULT NULL,
+  `status` varchar(1) DEFAULT NULL,
+  `priority` varchar(6) DEFAULT NULL,
+  `createdDate` datetime DEFAULT NULL,
+  `lastUpdateUser` varchar(50) DEFAULT NULL,
+  `lastUpdateTime` datetime DEFAULT NULL,
+  `additionalPhNo` bigint DEFAULT NULL,
+  PRIMARY KEY (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE englishexam; 
 CREATE TABLE `englishexam` (
-   `studentId` int NOT NULL,
-   `examId` int NOT NULL AUTO_INCREMENT,
-   `englishExamType` varchar(20) NOT NULL,
-   `examDate` DATETIME DEFAULT NULL,
-   `overall` varchar(20) DEFAULT NULL,
-   `listening` varchar(20) DEFAULT NULL,
-   `reading` varchar(20) DEFAULT NULL,
-   `writing` varchar(20) DEFAULT NULL,
-   `speaking` varchar(20) DEFAULT NULL,
-   PRIMARY KEY (`examId`),
-   FOREIGN KEY (`studentId`) REFERENCES student(`studentId`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `studentId` int NOT NULL,
+  `examId` int NOT NULL AUTO_INCREMENT,
+  `englishExamType` varchar(20) NOT NULL,
+  `examDate` datetime DEFAULT NULL,
+  `overall` varchar(20) DEFAULT NULL,
+  `listening` varchar(20) DEFAULT NULL,
+  `reading` varchar(20) DEFAULT NULL,
+  `writing` varchar(20) DEFAULT NULL,
+  `speaking` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`examId`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `englishexam_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
  
  DROP TABLE education;
  CREATE TABLE `education` (
-   `studentId` int NOT NULL,
-   `educationId` int NOT NULL AUTO_INCREMENT,
-   `countryOfEducation` varchar(50) NOT NULL,
-   `highestLevelOfEducation` varchar(20) DEFAULT NULL,
-   `gradingScheme` varchar(20) DEFAULT NULL,
-   `gradeAverage` varchar(10) DEFAULT NULL,
-   `graduatedYear` DATETIME DEFAULT NULL,
-   PRIMARY KEY (`educationId`),
-   FOREIGN KEY (`studentId`) REFERENCES student(`studentId`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- 
- DROP TABLE workexperience;
- CREATE TABLE `workexperience` (
-   `studentId` int NOT NULL,
-   `workId` int NOT NULL AUTO_INCREMENT,
-   `companyName` varchar(30) NOT NULL,
-   `position` varchar(20) DEFAULT NULL,
-   `endDate` DATETIME DEFAULT NULL,
-   `startDate` DATETIME DEFAULT NULL,
-   `address` varchar(30) DEFAULT NULL,
-   PRIMARY KEY (`workId`),
-   FOREIGN KEY (`studentId`) REFERENCES student(`studentId`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- 
+  `studentId` int NOT NULL,
+  `educationId` int NOT NULL AUTO_INCREMENT,
+  `countryOfEducation` varchar(50) NOT NULL,
+  `highestLevelOfEducation` varchar(20) DEFAULT NULL,
+  `gradingScheme` varchar(20) DEFAULT NULL,
+  `gradeAverage` varchar(10) DEFAULT NULL,
+  `graduatedYear` datetime DEFAULT NULL,
+  PRIMARY KEY (`educationId`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `education_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
  DROP TABLE user;
  CREATE TABLE `user` (
    `userId` int NOT NULL AUTO_INCREMENT,
@@ -79,3 +70,57 @@ CREATE TABLE `englishexam` (
    `lastUpdateTime` DATETIME DEFAULT NULL,
    PRIMARY KEY (`historyId`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE interestedcourses;
+ CREATE TABLE `interestedcourses` (
+  `studentId` int NOT NULL,
+  `intrId` int NOT NULL,
+  `requestedCourse` varchar(50) NOT NULL,
+  `preferredCountry` varchar(40) DEFAULT NULL,
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `interestedcourses_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ DROP TABLE officedata;
+CREATE TABLE `officedata` (
+  `studentId` int NOT NULL,
+  `serNum` int NOT NULL AUTO_INCREMENT,
+  `source` varchar(50) NOT NULL,
+  `wayOfContact` varchar(40) DEFAULT NULL,
+  `counselor` varchar(30) DEFAULT NULL,
+  `priority` varchar(10) DEFAULT NULL,
+  `dateOfRequest` datetime DEFAULT NULL,
+  PRIMARY KEY (`serNum`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `officedata_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ DROP TABLE todofollowupremarks;
+CREATE TABLE `todofollowupremarks` (
+  `studentId` int NOT NULL,
+  `toDoFollowUpSerNum` int NOT NULL,
+  `toDoSerNum` int NOT NULL,
+  `followUpSerNum` int NOT NULL,
+  `currentStatus` varchar(20) NOT NULL,
+  `remarks` varchar(200) DEFAULT NULL,
+  `remarkType` varchar(10) NOT NULL,
+  `userName` varchar(20) NOT NULL,
+  `lastUpdatedTime` datetime DEFAULT NULL,
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `todofollowupremarks_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ DROP TABLE workexperience;
+CREATE TABLE `workexperience` (
+  `studentId` int NOT NULL,
+  `workId` int NOT NULL AUTO_INCREMENT,
+  `companyName` varchar(30) NOT NULL,
+  `position` varchar(20) DEFAULT NULL,
+  `endDate` datetime DEFAULT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `workAddress` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`workId`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `workexperience_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
