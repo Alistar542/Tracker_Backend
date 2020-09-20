@@ -163,7 +163,7 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(req.body.followUpDate));
   queryUpdateValues.push(req.body.priority);
   queryUpdateValues.push(req.body.status);
-  queryUpdateValues.push(req.body.lastUpdateUser);
+  queryUpdateValues.push(req.body.user.userName);
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
