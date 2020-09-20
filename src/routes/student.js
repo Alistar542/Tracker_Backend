@@ -333,25 +333,33 @@ router.route("/getstudent").post((req, res) => {
 
   if (req.body.firstName) {
     let firstName = req.body.firstName ? req.body.firstName.toLowerCase() : "";
-    queryConditions = queryConditions + " AND firstName= ?";
+    queryConditions = queryConditions + " AND STD.firstName= ?";
     queryConditionValues.push(firstName);
   }
 
   if (req.body.status) {
-    queryConditions = queryConditions + " AND status= ?";
+    queryConditions = queryConditions + " AND STD.status= ?";
     queryConditionValues.push(req.body.status);
   }
 
   if (req.body.phoneNumber) {
-    queryConditions = queryConditions + " AND phoneNumber= ?";
+    queryConditions = queryConditions + " AND STD.phoneNumber= ?";
     queryConditionValues.push(req.body.phoneNumber);
   }
 
   if (req.body.priority) {
-    queryConditions = queryConditions + " AND priority= ?";
+    queryConditions = queryConditions + " AND OFF.priority= ?";
     queryConditionValues.push(req.body.priority);
   }
-  
+  if (req.body.creationFromDate && req.body.creationToDate) {
+    queryConditions = queryConditions + " AND STD.createdDate BETWEEN ? AND ?";
+    queryConditionValues.push(convertToMySqlDateTime(req.body.creationFromDate));
+    queryConditionValues.push(convertToMySqlDateTime(req.body.creationToDate));
+  }
+  if (req.body.studentId) {
+    queryConditions = queryConditions + " AND STD.studentId= ?";
+    queryConditionValues.push(req.body.studentId);
+  }
   queryConditions = queryConditions + " ORDER BY REM.toDoFollowUpSerNum,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
