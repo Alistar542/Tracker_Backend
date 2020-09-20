@@ -18,7 +18,8 @@ CREATE TABLE `student` (
   `lastUpdateTime` datetime DEFAULT NULL,
   `additionalPhNo` bigint DEFAULT NULL,
   PRIMARY KEY (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE englishexam; 
 CREATE TABLE `englishexam` (
@@ -34,11 +35,12 @@ CREATE TABLE `englishexam` (
   PRIMARY KEY (`examId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `englishexam_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
  
  DROP TABLE education;
- CREATE TABLE `education` (
+CREATE TABLE `education` (
   `studentId` int NOT NULL,
   `educationId` int NOT NULL AUTO_INCREMENT,
   `countryOfEducation` varchar(50) NOT NULL,
@@ -49,7 +51,8 @@ CREATE TABLE `englishexam` (
   PRIMARY KEY (`educationId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `education_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
  DROP TABLE user;
  CREATE TABLE `user` (
@@ -62,18 +65,19 @@ CREATE TABLE `englishexam` (
  
  DROP TABLE studenthistory;
  CREATE TABLE `studenthistory` (
-   `historyId` int NOT NULL AUTO_INCREMENT,
-   `studentId` int NOT NULL,
-   `operationFlag` varchar(1) NOT NULL,
-   `remarks` varchar(200) DEFAULT NULL,
-   `lastUpdateUser` varchar(10) DEFAULT NULL,
-   `lastUpdateTime` DATETIME DEFAULT NULL,
-   PRIMARY KEY (`historyId`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `historyId` int NOT NULL AUTO_INCREMENT,
+  `studentId` int NOT NULL,
+  `operationFlag` varchar(20) NOT NULL,
+  `remarks` varchar(200) DEFAULT NULL,
+  `lastUpdateUser` varchar(10) DEFAULT NULL,
+  `lastUpdateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`historyId`)
+) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 DROP TABLE interestedcourses;
- CREATE TABLE `interestedcourses` (
+CREATE TABLE `interestedcourses` (
   `studentId` int NOT NULL,
   `intrId` int NOT NULL,
   `requestedCourse` varchar(50) NOT NULL,
@@ -81,6 +85,7 @@ DROP TABLE interestedcourses;
   KEY `studentId` (`studentId`),
   CONSTRAINT `interestedcourses_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
  DROP TABLE officedata;
 CREATE TABLE `officedata` (
@@ -94,7 +99,8 @@ CREATE TABLE `officedata` (
   PRIMARY KEY (`serNum`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `officedata_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
  DROP TABLE todofollowupremarks;
 CREATE TABLE `todofollowupremarks` (
@@ -111,6 +117,7 @@ CREATE TABLE `todofollowupremarks` (
   KEY `studentId` (`studentId`),
   CONSTRAINT `todofollowupremarks_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
  DROP TABLE workexperience;
@@ -155,7 +162,8 @@ CREATE TABLE `proposal` (
   PRIMARY KEY (`propSerNum`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `proposal_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE enrolled;
 CREATE TABLE `enrolled` (
