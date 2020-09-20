@@ -3,3 +3,11 @@ exports.OPERATION_FLAG = {
   UPDATE: "U",
   DELETE: "D",
 };
+
+exports.APPLICATION_STATUS={
+   N:"New",
+   O:"Postponed",
+   P:"Proposed",
+   E:"Enrolled",
+   C:"Cancelled",
+}

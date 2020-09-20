@@ -34,11 +34,6 @@ router.route("/add").post((req, res) => {
     req
   );
 
-  let {
-    studentHistoryQueryInsertValues,
-    studentHistoryQueryPrefix,
-  } = populateStudentHistory();
-
   connection.beginTransaction(function (err) {
     if (err) {
       throw err;
@@ -108,20 +103,6 @@ router.route("/add").post((req, res) => {
           }
         );
 
-        studentHistoryQueryInsertValues[0] = rows.insertId;
-        connection.query(
-          studentHistoryQueryPrefix,
-          studentHistoryQueryInsertValues,
-          (err, rows) => {
-            if (err) {
-              console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
-              return connection.rollback(function () {
-                throw err;
-              });
-            }
-          }
-        );
-
         if (req.body.requestedCourseDetails) {
           populateInterestedCourses(rows, req);
         }
@@ -132,6 +113,7 @@ router.route("/add").post((req, res) => {
           rows.insertId,
           "Prospectus"
         );
+        saveStudentHistory(req, rows.insertId,"I","New Entry");
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -163,21 +145,11 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(req.body.followUpDate));
   queryUpdateValues.push(req.body.priority);
   queryUpdateValues.push(req.body.status);
-  queryUpdateValues.push(req.body.user.userName);
+  queryUpdateValues.push(req.user.userName);
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
-  let studentHistoryQueryPrefix =
-    STUDENT_HISTORY_QUERY.ADD_STUDENT_HISTORY_QUERY;
-  let studentHistoryQueryInsertValues = [];
-  studentHistoryQueryInsertValues.push(req.params.id);
-  studentHistoryQueryInsertValues.push(COMMON_CONSTANTS.OPERATION_FLAG.UPDATE);
-  studentHistoryQueryInsertValues.push(req.body.remarks);
-  studentHistoryQueryInsertValues.push(req.body.user);
-  studentHistoryQueryInsertValues.push(
-    convertToMySqlDateTime(new Date().toISOString())
-  );
-
+  
   let englishExamQueryPrefix = STUDENT_QUERY.UPDATE_ENGLISH_EXAM_QUERY;
   let englishExamQueryInsertValues = [];
   englishExamQueryInsertValues[0] = req.params.id;
@@ -237,18 +209,6 @@ router.route("/update/:id").post((req, res) => {
         });
       }
       connection.query(
-        studentHistoryQueryPrefix,
-        studentHistoryQueryInsertValues,
-        (err, rows) => {
-          if (err) {
-            console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
-            return connection.rollback(function () {
-              throw err;
-            });
-          }
-        }
-      );
-      connection.query(
         englishExamQueryPrefix,
         englishExamQueryInsertValues,
         (err, rows) => {
@@ -284,6 +244,7 @@ router.route("/update/:id").post((req, res) => {
           }
         }
       );
+      saveStudentHistory(req, req.body.studentId,"U","Prospectus Updated");
       connection.query(
         officeDataQueryPrefix,
         officeDataQueryValues,
@@ -347,6 +308,7 @@ router.route("/update/:id").post((req, res) => {
         req.params.id,
         "Prospectus"
       );
+      
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -389,7 +351,8 @@ router.route("/getstudent").post((req, res) => {
     queryConditions = queryConditions + " AND priority= ?";
     queryConditionValues.push(req.body.priority);
   }
-  queryConditions = queryConditions + " ORDER BY studentId DESC";
+  
+  queryConditions = queryConditions + " ORDER BY REM.toDoFollowUpSerNum,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
@@ -551,18 +514,29 @@ function populateInterestedCourses(rows, req) {
   }
 }
 
-function populateStudentHistory() {
+function saveStudentHistory(req, studentId, operationId, remarks) {
   let studentHistoryQueryPrefix =
     STUDENT_HISTORY_QUERY.ADD_STUDENT_HISTORY_QUERY;
   let studentHistoryQueryInsertValues = [];
-  studentHistoryQueryInsertValues[0] = "studentId";
-  studentHistoryQueryInsertValues.push(COMMON_CONSTANTS.OPERATION_FLAG.INSERT);
-  studentHistoryQueryInsertValues.push(null);
-  studentHistoryQueryInsertValues.push("ADMIN");
+  studentHistoryQueryInsertValues[0] = studentId;
+  studentHistoryQueryInsertValues.push(operationId);
+  studentHistoryQueryInsertValues.push(remarks);
+  studentHistoryQueryInsertValues.push(req.user.userName);
   studentHistoryQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
-  return { studentHistoryQueryInsertValues, studentHistoryQueryPrefix };
+  connection.query(
+    studentHistoryQueryPrefix,
+    studentHistoryQueryInsertValues,
+    (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO STUDENT HISTORY : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+    }
+  );
 }
 
 function populateOfficeData(req) {
@@ -747,7 +721,11 @@ function mapResponse(res, rows) {
       row.studentId + row.phoneNumber + row.email + row.proposalId;
     let masterKey = row.studentId + row.phoneNumber + row.email;
     let toDoFollowUpRemarksKey =
-      row.studentId + row.phoneNumber + row.email + row.toDoFollowUpSerNum+row.screenName;
+      row.studentId +
+      row.phoneNumber +
+      row.email +
+      row.toDoFollowUpSerNum +
+      row.screenName;
     if (row.proposalId === 1 && !proposalIntCourMap.has(proposalKey)) {
       if (row.appldUnvsty) {
         let element = {
@@ -899,6 +877,8 @@ router.route("/updatestatusofstudent/:id").post((req, res) => {
           throw err;
         });
       }
+      let status=req.body.status;
+      saveStudentHistory(req, req.body.studentId,"S","Status Changed to "+COMMON_CONSTANTS.APPLICATION_STATUS[status]);
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -919,6 +899,7 @@ router.route("/saveproposalinfo/").post((req, res) => {
     if (err) {
       throw err;
     }
+    saveStudentHistory(req, req.body.studentId,"U","Proposal info updated");
     connection.query(
       deleteQueryPrefix,
       deleteQueryUpdateValues,
@@ -1011,6 +992,7 @@ router.route("/saveenrolledinfo/").post((req, res) => {
     if (err) {
       throw err;
     }
+    saveStudentHistory(req, req.body.studentId,"U","Enrolment info updated");
     connection.query(
       deleteQueryPrefix,
       deleteQueryUpdateValues,
