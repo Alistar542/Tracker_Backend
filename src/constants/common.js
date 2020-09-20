@@ -6,7 +6,7 @@ exports.OPERATION_FLAG = {
 
 exports.APPLICATION_STATUS={
    N:"New",
-   O:"Postponed",
+   X:"Postponed",
    P:"Proposed",
    E:"Enrolled",
    C:"Cancelled",

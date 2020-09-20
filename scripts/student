@@ -18,7 +18,7 @@ CREATE TABLE `student` (
   `lastUpdateTime` datetime DEFAULT NULL,
   `additionalPhNo` bigint DEFAULT NULL,
   PRIMARY KEY (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE englishexam; 
@@ -35,7 +35,7 @@ CREATE TABLE `englishexam` (
   PRIMARY KEY (`examId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `englishexam_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
  
@@ -51,7 +51,7 @@ CREATE TABLE `education` (
   PRIMARY KEY (`educationId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `education_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
  DROP TABLE user;
@@ -72,7 +72,7 @@ CREATE TABLE `education` (
   `lastUpdateUser` varchar(10) DEFAULT NULL,
   `lastUpdateTime` datetime DEFAULT NULL,
   PRIMARY KEY (`historyId`)
-) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 
@@ -99,7 +99,7 @@ CREATE TABLE `officedata` (
   PRIMARY KEY (`serNum`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `officedata_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
  DROP TABLE todofollowupremarks;
@@ -132,7 +132,7 @@ CREATE TABLE `workexperience` (
   PRIMARY KEY (`workId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `workexperience_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE proposal;
 CREATE TABLE `proposal` (
@@ -162,7 +162,7 @@ CREATE TABLE `proposal` (
   PRIMARY KEY (`propSerNum`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `proposal_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE enrolled;
