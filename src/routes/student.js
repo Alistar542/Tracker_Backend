@@ -125,7 +125,13 @@ router.route("/add").post((req, res) => {
         if (req.body.requestedCourseDetails) {
           populateInterestedCourses(rows, req);
         }
-        populateToDoFollowUpDetails(req, rows.insertId);
+        populateToDoFollowUpDetails(
+          req,
+          req.body.followUpRemarks,
+          req.body.toDoRemarks,
+          rows.insertId,
+          "Prospectus"
+        );
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -334,7 +340,13 @@ router.route("/update/:id").post((req, res) => {
           );
         }
       }
-      populateToDoFollowUpDetails(req, req.params.id);
+      populateToDoFollowUpDetails(
+        req,
+        req.body.followUpRemarks,
+        req.body.toDoRemarks,
+        req.params.id,
+        "Prospectus"
+      );
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -387,14 +399,20 @@ router.route("/getstudent").post((req, res) => {
   });
 });
 
-
-function populateToDoFollowUpDetails(req, studentId) {
+function populateToDoFollowUpDetails(
+  req,
+  followUpRemarks,
+  toDoRemarks,
+  studentId,
+  screenName
+) {
   let serNum = 0;
-  if (req.body.followUpRemarks) {
+  if (followUpRemarks) {
     let todoFolloupQueryPrefix = STUDENT_QUERY.DELETE_TODO_FOLLOWUP_QUERY;
     let todoFolloupQueryValues = [];
     todoFolloupQueryValues[0] = studentId;
     todoFolloupQueryValues.push("F");
+    todoFolloupQueryValues.push(screenName);
     connection.query(
       todoFolloupQueryPrefix,
       todoFolloupQueryValues,
@@ -407,7 +425,7 @@ function populateToDoFollowUpDetails(req, studentId) {
         }
       }
     );
-    for (let i = 0; i < req.body.followUpRemarks.length; i++) {
+    for (let i = 0; i < followUpRemarks.length; i++) {
       let todoFolloupQueryPrefix = STUDENT_QUERY.INSERT_TODO_FOLLOWUP_QUERY;
       let todoFolloupQueryValues = [];
       todoFolloupQueryValues[0] = studentId;
@@ -415,10 +433,13 @@ function populateToDoFollowUpDetails(req, studentId) {
       todoFolloupQueryValues.push(0);
       todoFolloupQueryValues.push(i + 1);
       todoFolloupQueryValues.push(req.body.status);
-      todoFolloupQueryValues.push(req.body.followUpRemarks[i].remark);
+      todoFolloupQueryValues.push(screenName);
+      todoFolloupQueryValues.push(followUpRemarks[i].remark);
       todoFolloupQueryValues.push("F");
       todoFolloupQueryValues.push(req.user.userName);
-      todoFolloupQueryValues.push(convertToMySqlDateTime(new Date().toISOString()));
+      todoFolloupQueryValues.push(
+        convertToMySqlDateTime(new Date().toISOString())
+      );
 
       connection.query(
         todoFolloupQueryPrefix,
@@ -435,11 +456,12 @@ function populateToDoFollowUpDetails(req, studentId) {
       serNum = i + 1;
     }
   }
-  if (req.body.toDoRemarks) {
+  if (toDoRemarks) {
     let todoFolloupQueryPrefix = STUDENT_QUERY.DELETE_TODO_FOLLOWUP_QUERY;
     let todoFolloupQueryValues = [];
     todoFolloupQueryValues[0] = studentId;
     todoFolloupQueryValues.push("T");
+    todoFolloupQueryValues.push(screenName);
     connection.query(
       todoFolloupQueryPrefix,
       todoFolloupQueryValues,
@@ -452,7 +474,7 @@ function populateToDoFollowUpDetails(req, studentId) {
         }
       }
     );
-    for (let i = 0; i < req.body.toDoRemarks.length; i++) {
+    for (let i = 0; i < toDoRemarks.length; i++) {
       let todoFolloupQueryPrefix = STUDENT_QUERY.INSERT_TODO_FOLLOWUP_QUERY;
       let todoFolloupQueryValues = [];
       todoFolloupQueryValues[0] = studentId;
@@ -461,7 +483,8 @@ function populateToDoFollowUpDetails(req, studentId) {
       todoFolloupQueryValues.push(i + 1);
       todoFolloupQueryValues.push(0);
       todoFolloupQueryValues.push(req.body.status);
-      todoFolloupQueryValues.push(req.body.toDoRemarks[i].remark);
+      todoFolloupQueryValues.push(screenName);
+      todoFolloupQueryValues.push(toDoRemarks[i].remark);
       todoFolloupQueryValues.push("T");
       todoFolloupQueryValues.push(req.user.userName);
       todoFolloupQueryValues.push(
@@ -617,7 +640,7 @@ function populateStudentPersonalDetails(req) {
   studentQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
-  studentQueryInsertValues.push(req.body.lastUpdateUser);
+  studentQueryInsertValues.push(req.user.userName);
   studentQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
@@ -626,16 +649,37 @@ function populateStudentPersonalDetails(req) {
 
 function mapResponse(res, rows) {
   let hashmap = new HashMap();
-  let intCourMap=new HashMap();
-  let toDoFollowUpMap=new HashMap();
+  let intCourMap = new HashMap();
+  let toDoFollowUpMap = new HashMap();
   let newRows = [];
   for (i = 0; i < rows.length; i++) {
     let requestedCourseDetails = [];
     let row = rows[i];
-    
-    let interestedCouresesKey = row.studentId + row.phoneNumber + row.email+row.intrId;
-    let masterKey=row.studentId + row.phoneNumber + row.email;
-    let toDoFollowUpRemarksKey = row.studentId + row.phoneNumber + row.email+row.toDoFollowUpSerNum;
+
+    let interestedCouresesKey =
+      row.studentId + row.phoneNumber + row.email + row.intrId;
+    let masterKey = row.studentId + row.phoneNumber + row.email;
+    let toDoFollowUpRemarksKey =
+      row.studentId + row.phoneNumber + row.email + row.toDoFollowUpSerNum;
+    if (
+      row.courseStartingDate ||
+      row.currency ||
+      row.totalTutionFees ||
+      row.annualTutionFees
+    ) {
+      let enrolledData = {
+        totalTutionFees: row.totalTutionFees,
+        annualTutionFees: row.annualTutionFees,
+        totalCommission: row.totalCommission,
+        firstCommission: row.firstCommission,
+        balanceCommission: row.balanceCommission,
+        courseStartingDate: row.courseStartingDate,
+        nextInvoiceDate: row.nextInvoiceDate,
+        invoiceDate: row.invoiceDate,
+        currency: row.currency,
+      };
+      row.enrolledInfo = enrolledData;
+    }
     if (row.intrId === 1 && !intCourMap.has(interestedCouresesKey)) {
       if (row.requestedCourse) {
         let element = {
@@ -644,7 +688,7 @@ function mapResponse(res, rows) {
         };
         requestedCourseDetails.push(element);
         row.requestedCourseDetails = requestedCourseDetails;
-        intCourMap.set(interestedCouresesKey,row);
+        intCourMap.set(interestedCouresesKey, row);
         hashmap.set(masterKey, row);
       }
     } else if (row.intrId > 1 && !intCourMap.has(interestedCouresesKey)) {
@@ -657,46 +701,183 @@ function mapResponse(res, rows) {
         requestedCourseDetails = row.requestedCourseDetails;
         requestedCourseDetails.push(element);
         row.requestedCourseDetails = requestedCourseDetails;
-        intCourMap.set(interestedCouresesKey,row);
+        intCourMap.set(interestedCouresesKey, row);
         hashmap.set(masterKey, row);
       }
-    } 
-    if(row.toDoFollowUpSerNum>0 && !toDoFollowUpMap.has(toDoFollowUpRemarksKey)){
-      let followUpSerNum=row.followUpSerNum;
-      let toDoSerNum=row.toDoSerNum;
-      let element={
-        remark:row.remarks,
-        operationFlag:""
-      }
-      let existingRow=hashmap.get(masterKey);
-      if(followUpSerNum>0 && followUpSerNum===1){
-        existingRow.followUpRemarks=[];
+    }
+    if (
+      row.toDoFollowUpSerNum > 0 &&
+      !toDoFollowUpMap.has(toDoFollowUpRemarksKey) &&
+      row.screenName === "Prospectus"
+    ) {
+      let followUpSerNum = row.followUpSerNum;
+      let toDoSerNum = row.toDoSerNum;
+      let element = {
+        remark: row.remarks,
+        operationFlag: "",
+      };
+      let existingRow = hashmap.get(masterKey);
+      if (followUpSerNum > 0 && followUpSerNum === 1) {
+        existingRow.followUpRemarks = [];
+        existingRow.followUpRemarks.push(element);
+      } else if (followUpSerNum > 0) {
+        existingRow = hashmap.get(masterKey);
         existingRow.followUpRemarks.push(element);
       }
-      else if(followUpSerNum>0){
-        existingRow=hashmap.get(masterKey);
-        existingRow.followUpRemarks.push(element);
-      }
-      if(toDoSerNum>0 && toDoSerNum==1){
-        existingRow.toDoRemarks=[];
+      if (toDoSerNum > 0 && toDoSerNum == 1) {
+        existingRow.toDoRemarks = [];
+        existingRow.toDoRemarks.push(element);
+      } else if (toDoSerNum > 0) {
+        existingRow = hashmap.get(masterKey);
         existingRow.toDoRemarks.push(element);
       }
-      else if(toDoSerNum>0){
-        existingRow=hashmap.get(masterKey);
-        existingRow.toDoRemarks.push(element);
-      }
-      toDoFollowUpMap.set(toDoFollowUpRemarksKey,existingRow);
+      toDoFollowUpMap.set(toDoFollowUpRemarksKey, existingRow);
       hashmap.set(masterKey, existingRow);
     }
-    
   }
-  hashmap.forEach(function (value, key) {
+
+  let proposalHashmap = hashmap;
+  let proposalIntCourMap = new HashMap();
+  let proposalToDoFollowUpMap = new HashMap();
+
+  for (i = 0; i < rows.length; i++) {
+    let proposalInfo = {};
+    let row = rows[i];
+    let proposalKey =
+      row.studentId + row.phoneNumber + row.email + row.proposalId;
+    let masterKey = row.studentId + row.phoneNumber + row.email;
+    let toDoFollowUpRemarksKey =
+      row.studentId + row.phoneNumber + row.email + row.toDoFollowUpSerNum+row.screenName;
+    if (row.proposalId === 1 && !proposalIntCourMap.has(proposalKey)) {
+      if (row.appldUnvsty) {
+        let element = {
+          visaApplnStatus: row.visaApplnStatus,
+          visaStatus: row.visaStatus,
+          visaApplnPrcDate: row.visaApplnPrcDate,
+          visaApRjDate: row.visaApRjDate,
+          travelDate: row.travelDate,
+          applicationDetails: [
+            {
+              applnId: row.applnId,
+              appldUnvsty: row.appldUnvsty,
+              appldCourse: row.appldCourse,
+              appldCourseTyp: row.appldCourseTyp,
+              appldDate: row.appldDate,
+              offrLtrStatus: row.offrLtrStatus,
+              offrLtrDate: row.offrLtrDate,
+              visaLtrStatus: row.visaLtrStatus,
+              visaLtrDate: row.visaLtrDate,
+              feesPaid: row.feesPaid,
+              courseStrtDate: row.courseStrtDate,
+              stdUsrName: row.stdUsrName,
+              stdPwd: row.stdPwd,
+              applStatus: row.applStatus,
+            },
+          ],
+        };
+        proposalInfo = element;
+        row.proposalInfo = proposalInfo;
+        proposalIntCourMap.set(proposalKey, row);
+        proposalHashmap.set(masterKey, row);
+      }
+    } else if (row.proposalId > 1 && !proposalIntCourMap.has(proposalKey)) {
+      if (row.appldUnvsty) {
+        let element = {
+          visaApplnStatus: row.visaApplnStatus,
+          visaStatus: row.visaStatus,
+          visaApplnPrcDate: row.visaApplnPrcDate,
+          visaApRjDate: row.visaApRjDate,
+          travelDate: row.travelDate,
+          applicationDetails: [
+            {
+              applnId: row.applnId,
+              appldUnvsty: row.appldUnvsty,
+              appldCourse: row.appldCourse,
+              appldCourseTyp: row.appldCourseTyp,
+              appldDate: row.appldDate,
+              offrLtrStatus: row.offrLtrStatus,
+              offrLtrDate: row.offrLtrDate,
+              visaLtrStatus: row.visaLtrStatus,
+              visaLtrDate: row.visaLtrDate,
+              feesPaid: row.feesPaid,
+              courseStrtDate: row.courseStrtDate,
+              stdUsrName: row.stdUsrName,
+              stdPwd: row.stdPwd,
+              applStatus: row.applStatus,
+            },
+          ],
+        };
+        row = proposalHashmap.get(masterKey);
+        proposalInfo = row.proposalInfo;
+        proposalInfo.applicationDetails.push(element.applicationDetails[0]);
+        row.proposalInfo = proposalInfo;
+        proposalIntCourMap.set(proposalKey, row);
+        proposalHashmap.set(masterKey, row);
+      }
+    } else if (
+      row.toDoFollowUpSerNum > 0 &&
+      !proposalToDoFollowUpMap.has(toDoFollowUpRemarksKey) &&
+      row.screenName === "Proposal"
+    ) {
+      let followUpSerNum = row.followUpSerNum;
+      let toDoSerNum = row.toDoSerNum;
+      let element = {
+        remark: row.remarks,
+        operationFlag: "",
+      };
+      let existingRow = proposalHashmap.get(masterKey);
+      if (followUpSerNum > 0 && followUpSerNum === 1) {
+        existingRow.proposalInfo.followUpRemarks = [];
+        existingRow.proposalInfo.followUpRemarks.push(element);
+      } else if (followUpSerNum > 0) {
+        existingRow = proposalHashmap.get(masterKey);
+        existingRow.proposalInfo.followUpRemarks.push(element);
+      }
+      if (toDoSerNum > 0 && toDoSerNum == 1) {
+        existingRow.proposalInfo.toDoRemarks = [];
+        existingRow.proposalInfo.toDoRemarks.push(element);
+      } else if (toDoSerNum > 0) {
+        existingRow = proposalHashmap.get(masterKey);
+        existingRow.proposalInfo.toDoRemarks.push(element);
+      }
+      proposalToDoFollowUpMap.set(toDoFollowUpRemarksKey, existingRow);
+      proposalHashmap.set(masterKey, existingRow);
+    } else if (
+      row.toDoFollowUpSerNum > 0 &&
+      !proposalToDoFollowUpMap.has(toDoFollowUpRemarksKey) &&
+      row.screenName === "Enrolled"
+    ) {
+      let followUpSerNum = row.followUpSerNum;
+      let toDoSerNum = row.toDoSerNum;
+      let element = {
+        remark: row.remarks,
+        operationFlag: "",
+      };
+      let existingRow = proposalHashmap.get(masterKey);
+      if (followUpSerNum > 0 && followUpSerNum === 1) {
+        existingRow.enrolledInfo.followUpRemarks = [];
+        existingRow.enrolledInfo.followUpRemarks.push(element);
+      } else if (followUpSerNum > 0) {
+        existingRow = proposalHashmap.get(masterKey);
+        existingRow.enrolledInfo.followUpRemarks.push(element);
+      }
+      if (toDoSerNum > 0 && toDoSerNum == 1) {
+        existingRow.enrolledInfo.toDoRemarks = [];
+        existingRow.enrolledInfo.toDoRemarks.push(element);
+      } else if (toDoSerNum > 0) {
+        existingRow = proposalHashmap.get(masterKey);
+        existingRow.enrolledInfo.toDoRemarks.push(element);
+      }
+      proposalToDoFollowUpMap.set(toDoFollowUpRemarksKey, existingRow);
+      proposalHashmap.set(masterKey, existingRow);
+    }
+  }
+  proposalHashmap.forEach(function (value, key) {
     newRows.push(value);
+    rows = newRows;
   });
-  rows = newRows;
   return res.json(rows);
 }
-
 
 router.route("/updatestatusofstudent/:id").post((req, res) => {
   console.log("Update Id : " + req.params.id);
@@ -711,9 +892,36 @@ router.route("/updatestatusofstudent/:id").post((req, res) => {
     if (err) {
       throw err;
     }
+    connection.query(queryPrefix, queryUpdateValues, (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO STUDENT : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+      connection.commit(function (err) {
+        if (err) {
+          connection.rollback(function () {
+            throw err;
+          });
+        }
+        return res.json(rows);
+      });
+    });
+  });
+});
+router.route("/saveproposalinfo/").post((req, res) => {
+  let deleteQueryPrefix = STUDENT_QUERY.DELETE_PROPOSAL_INFO;
+  let deleteQueryUpdateValues = [];
+  deleteQueryUpdateValues.push(req.body.studentId);
+
+  connection.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
     connection.query(
-      queryPrefix,
-      queryUpdateValues,
+      deleteQueryPrefix,
+      deleteQueryUpdateValues,
       (err, rows) => {
         if (err) {
           console.log("ERROR CONNECTING TO STUDENT : " + err);
@@ -721,6 +929,66 @@ router.route("/updatestatusofstudent/:id").post((req, res) => {
             throw err;
           });
         }
+        for (i = 0; i < req.body.proposalInfo.applicationDetails.length; i++) {
+          let application = req.body.proposalInfo.applicationDetails[i];
+          let insertQueryPrefix = STUDENT_QUERY.INSERT_PROPOSAL_INFO;
+          let insertQueryUpdateValues = [];
+          insertQueryUpdateValues.push(req.body.studentId);
+          insertQueryUpdateValues.push(i + 1);
+          insertQueryUpdateValues.push(application.applnId);
+          insertQueryUpdateValues.push(application.appldUnvsty);
+          insertQueryUpdateValues.push(application.appldCourse);
+          insertQueryUpdateValues.push(application.appldCourseTyp);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(application.appldDate)
+          );
+          insertQueryUpdateValues.push(application.offrLtrStatus);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(application.offrLtrDate)
+          );
+          insertQueryUpdateValues.push(application.visaLtrStatus);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(application.visaLtrDate)
+          );
+          insertQueryUpdateValues.push(application.feesPaid);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(application.courseStrtDate)
+          );
+          insertQueryUpdateValues.push(application.stdUsrName);
+          insertQueryUpdateValues.push(application.stdPwd);
+          insertQueryUpdateValues.push(application.applStatus);
+          insertQueryUpdateValues.push(req.body.proposalInfo.visaApplnStatus);
+          insertQueryUpdateValues.push(req.body.proposalInfo.visaStatus);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(req.body.proposalInfo.visaApplnPrcDate)
+          );
+          insertQueryUpdateValues.push(req.body.proposalInfo.visaAppvd);
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(req.body.proposalInfo.visaApRjDate)
+          );
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(req.body.proposalInfo.travelDate)
+          );
+          connection.query(
+            insertQueryPrefix,
+            insertQueryUpdateValues,
+            (err, rows) => {
+              if (err) {
+                console.log("ERROR CONNECTING TO STUDENT : " + err);
+                return connection.rollback(function () {
+                  throw err;
+                });
+              }
+            }
+          );
+        }
+        populateToDoFollowUpDetails(
+          req,
+          req.body.proposalInfo.followUpRemarks,
+          req.body.proposalInfo.toDoRemarks,
+          req.body.studentId,
+          "Proposal"
+        );
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -732,10 +1000,78 @@ router.route("/updatestatusofstudent/:id").post((req, res) => {
       }
     );
   });
-  
 });
-router.route("/saveproposalinfo/").post((req, res) => {
-  let request=req;
- return null;
+
+router.route("/saveenrolledinfo/").post((req, res) => {
+  let deleteQueryPrefix = STUDENT_QUERY.DELETE_ENROL_INFO;
+  let deleteQueryUpdateValues = [];
+  deleteQueryUpdateValues.push(req.body.studentId);
+
+  connection.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
+    connection.query(
+      deleteQueryPrefix,
+      deleteQueryUpdateValues,
+      (err, rows) => {
+        if (err) {
+          console.log("ERROR CONNECTING TO STUDENT : " + err);
+          return connection.rollback(function () {
+            throw err;
+          });
+        }
+
+        let insertQueryPrefix = STUDENT_QUERY.INSERT_ENROL_INFO;
+        let insertQueryUpdateValues = [];
+        insertQueryUpdateValues.push(req.body.studentId);
+        insertQueryUpdateValues.push(req.body.studentId);
+        insertQueryUpdateValues.push(req.body.enrolledInfo.totalTutionFees);
+        insertQueryUpdateValues.push(req.body.enrolledInfo.annualTutionFees);
+        insertQueryUpdateValues.push(req.body.enrolledInfo.totalCommission);
+        insertQueryUpdateValues.push(req.body.enrolledInfo.firstCommission);
+        insertQueryUpdateValues.push(
+          convertToMySqlDateTime(req.body.enrolledInfo.courseStartingDate)
+        );
+        insertQueryUpdateValues.push(req.body.enrolledInfo.balanceCommission);
+        insertQueryUpdateValues.push(req.body.enrolledInfo.currency);
+        insertQueryUpdateValues.push(
+          convertToMySqlDateTime(req.body.enrolledInfo.nextInvoiceDate)
+        );
+        insertQueryUpdateValues.push(
+          convertToMySqlDateTime(req.body.enrolledInfo.invoiceDate)
+        );
+
+        connection.query(
+          insertQueryPrefix,
+          insertQueryUpdateValues,
+          (err, rows) => {
+            if (err) {
+              console.log("ERROR CONNECTING TO STUDENT : " + err);
+              return connection.rollback(function () {
+                throw err;
+              });
+            }
+          }
+        );
+
+        populateToDoFollowUpDetails(
+          req,
+          req.body.enrolledInfo.followUpRemarks,
+          req.body.enrolledInfo.toDoRemarks,
+          req.body.studentId,
+          "Enrolled"
+        );
+        connection.commit(function (err) {
+          if (err) {
+            connection.rollback(function () {
+              throw err;
+            });
+          }
+          return res.json(rows);
+        });
+      }
+    );
+  });
 });
 module.exports = router;

@@ -20,7 +20,12 @@ exports.FIND_STUDENT_QUERY = `SELECT
     EGX.englishExamType,EGX.examDate,EGX.examId,EDU.countryOfEducation,EDU.highestLevelOfEducation,EDU.gradingScheme,
     EDU.gradeAverage,EDU.graduatedYear,WRK.companyName,WRK.position,WRK.endDate,WRK.startDate,WRK.workAddress,OFF.source,OFF.wayOfContact,OFF.counselor,OFF.priority,OFF.dateOfRequest,
     COU.intrId,COU.requestedCourse,COU.preferredCountry,
-    REM.toDoFollowUpSerNum,REM.toDoSerNum,REM.followUpSerNum,REM.remarks,REM.remarkType,REM.userName
+    REM.toDoFollowUpSerNum,REM.toDoSerNum,REM.followUpSerNum,REM.remarks,REM.remarkType,REM.userName,REM.screenName,
+    PRO.proposalId,PRO.applnId,PRO.appldUnvsty,PRO.appldCourse,PRO.appldCourseTyp,PRO.appldDate,PRO.offrLtrStatus,
+    PRO.offrLtrDate,PRO.visaLtrStatus,PRO.visaLtrDate,PRO.feesPaid,PRO.courseStrtDate,PRO.stdUsrName,PRO.stdPwd,PRO.applStatus,
+    PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,
+    ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
+    ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency
     FROM student STD
     LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
     LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
@@ -28,6 +33,8 @@ exports.FIND_STUDENT_QUERY = `SELECT
     LEFT JOIN officedata OFF ON STD.studentId=OFF.studentId
     LEFT JOIN interestedcourses COU ON STD.studentId=COU.studentId
     LEFT JOIN todofollowupremarks REM ON STD.studentId=REM.studentId
+    LEFT JOIN proposal PRO ON STD.studentId=PRO.studentId
+    LEFT JOIN enrolled ENR ON STD.studentId=ENR.studentId
     WHERE 1=1`;
 
 
@@ -72,11 +79,24 @@ exports.INSERT_INTERESTED_COURSES_QUERY = `INSERT INTO interestedcourses
       (studentId,intrId,requestedCourse,preferredCountry) 
         VALUES(?,?,?,?)`;
 
-exports.DELETE_TODO_FOLLOWUP_QUERY=`DELETE FROM todofollowupremarks where studentId=? AND remarkType=?`;
+exports.DELETE_TODO_FOLLOWUP_QUERY=`DELETE FROM todofollowupremarks where studentId=? AND remarkType=? AND screenName=?`;
 
 exports.INSERT_TODO_FOLLOWUP_QUERY = `INSERT INTO todofollowupremarks 
-      (studentId,toDoFollowUpSerNum,toDoSerNum,followUpSerNum,currentStatus,remarks,remarkType,userName,lastUpdatedTime) 
-        VALUES(?,?,?,?,?,?,?,?,?)`;
+      (studentId,toDoFollowUpSerNum,toDoSerNum,followUpSerNum,currentStatus,screenName,remarks,remarkType,userName,lastUpdatedTime) 
+        VALUES(?,?,?,?,?,?,?,?,?,?)`;
 
 exports.UPDATE_STUDENT_STATUS=`UPDATE student
 SET status=? WHERE studentId= ?`
+
+exports.INSERT_PROPOSAL_INFO=`INSERT INTO proposal
+(studentId,proposalId,applnId,appldUnvsty,appldCourse,appldCourseTyp,appldDate,offrLtrStatus,offrLtrDate,visaLtrStatus,visaLtrDate,
+feesPaid,courseStrtDate,stdUsrName,stdPwd,applStatus,visaApplnStatus,visaStatus,visaApplnPrcDate,visaAppvd,visaApRjDate,travelDate)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+exports.DELETE_PROPOSAL_INFO=`DELETE FROM proposal WHERE studentId=?`
+
+exports.INSERT_ENROL_INFO=`INSERT INTO enrolled
+(studentId,enrolId,totalTutionFees,annualTutionFees,totalCommission,firstCommission,courseStartingDate,balanceCommission,currency,nextInvoiceDate,
+  invoiceDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)`
+
+exports.DELETE_ENROL_INFO=`DELETE FROM enrolled WHERE studentId=?`

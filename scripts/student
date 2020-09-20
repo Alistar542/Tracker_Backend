@@ -103,6 +103,7 @@ CREATE TABLE `todofollowupremarks` (
   `toDoSerNum` int NOT NULL,
   `followUpSerNum` int NOT NULL,
   `currentStatus` varchar(20) NOT NULL,
+  `screenName` varchar(30) NOT NULL,
   `remarks` varchar(200) DEFAULT NULL,
   `remarkType` varchar(10) NOT NULL,
   `userName` varchar(20) NOT NULL,
@@ -110,6 +111,7 @@ CREATE TABLE `todofollowupremarks` (
   KEY `studentId` (`studentId`),
   CONSTRAINT `todofollowupremarks_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
  DROP TABLE workexperience;
 CREATE TABLE `workexperience` (
@@ -124,3 +126,51 @@ CREATE TABLE `workexperience` (
   KEY `studentId` (`studentId`),
   CONSTRAINT `workexperience_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE proposal;
+CREATE TABLE `proposal` (
+  `studentId` int NOT NULL,
+  `propSerNum` int NOT NULL AUTO_INCREMENT,
+  `proposalId` int DEFAULT NULL,
+  `applnId` varchar(20) DEFAULT NULL,
+  `appldUnvsty` varchar(50) NOT NULL,
+  `appldCourse` varchar(50) DEFAULT NULL,
+  `appldCourseTyp` varchar(5) DEFAULT NULL,
+  `appldDate` datetime DEFAULT NULL,
+  `offrLtrStatus` varchar(5) DEFAULT NULL,
+  `offrLtrDate` datetime DEFAULT NULL,
+  `visaLtrStatus` varchar(5) DEFAULT NULL,
+  `visaLtrDate` datetime DEFAULT NULL,
+  `feesPaid` varchar(5) DEFAULT NULL,
+  `courseStrtDate` datetime DEFAULT NULL,
+  `stdUsrName` varchar(50) DEFAULT NULL,
+  `stdPwd` varchar(50) DEFAULT NULL,
+  `applStatus` varchar(50) DEFAULT NULL,
+  `visaApplnStatus` varchar(5) DEFAULT NULL,
+  `visaStatus` varchar(30) DEFAULT NULL,
+  `visaApplnPrcDate` datetime DEFAULT NULL,
+  `visaAppvd` varchar(30) DEFAULT NULL,
+  `visaApRjDate` datetime DEFAULT NULL,
+  `travelDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`propSerNum`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `proposal_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE enrolled;
+CREATE TABLE `enrolled` (
+  `studentId` int NOT NULL,
+  `enrolId` int NOT NULL,
+  `totalTutionFees` varchar(20) DEFAULT NULL,
+  `annualTutionFees` varchar(20) NOT NULL,
+  `totalCommission` varchar(20) DEFAULT NULL,
+  `firstCommission` varchar(20) DEFAULT NULL,
+  `courseStartingDate` datetime DEFAULT NULL,
+  `balanceCommission` varchar(20) DEFAULT NULL,
+  `currency` varchar(5) DEFAULT NULL,
+  `nextInvoiceDate` datetime DEFAULT NULL,
+  `invoiceDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`enrolId`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `enrolled_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
