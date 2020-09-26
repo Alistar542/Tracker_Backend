@@ -113,7 +113,7 @@ router.route("/add").post((req, res) => {
           rows.insertId,
           "Prospectus"
         );
-        saveStudentHistory(req, rows.insertId,"I","New Entry");
+        saveStudentHistory(req, rows.insertId, "I", "New Entry");
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -149,7 +149,6 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.params.id);
 
-  
   let englishExamQueryPrefix = STUDENT_QUERY.UPDATE_ENGLISH_EXAM_QUERY;
   let englishExamQueryInsertValues = [];
   englishExamQueryInsertValues[0] = req.params.id;
@@ -244,7 +243,7 @@ router.route("/update/:id").post((req, res) => {
           }
         }
       );
-      saveStudentHistory(req, req.body.studentId,"U","Prospectus Updated");
+      saveStudentHistory(req, req.body.studentId, "U", "Prospectus Updated");
       connection.query(
         officeDataQueryPrefix,
         officeDataQueryValues,
@@ -308,7 +307,7 @@ router.route("/update/:id").post((req, res) => {
         req.params.id,
         "Prospectus"
       );
-      
+
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -353,7 +352,9 @@ router.route("/getstudent").post((req, res) => {
   }
   if (req.body.creationFromDate && req.body.creationToDate) {
     queryConditions = queryConditions + " AND STD.createdDate BETWEEN ? AND ?";
-    queryConditionValues.push(convertToMySqlDateTime(req.body.creationFromDate));
+    queryConditionValues.push(
+      convertToMySqlDateTime(req.body.creationFromDate)
+    );
     queryConditionValues.push(convertToMySqlDateTime(req.body.creationToDate));
   }
   if (req.body.studentId) {
@@ -890,8 +891,13 @@ router.route("/updatestatusofstudent/:id").post((req, res) => {
           throw err;
         });
       }
-      let status=req.body.status;
-      saveStudentHistory(req, req.body.studentId,"S","Status Changed to "+COMMON_CONSTANTS.APPLICATION_STATUS[status]);
+      let status = req.body.status;
+      saveStudentHistory(
+        req,
+        req.body.studentId,
+        "S",
+        "Status Changed to " + COMMON_CONSTANTS.APPLICATION_STATUS[status]
+      );
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -912,7 +918,7 @@ router.route("/saveproposalinfo/").post((req, res) => {
     if (err) {
       throw err;
     }
-    saveStudentHistory(req, req.body.studentId,"U","Proposal info updated");
+    saveStudentHistory(req, req.body.studentId, "U", "Proposal info updated");
     connection.query(
       deleteQueryPrefix,
       deleteQueryUpdateValues,
@@ -1005,7 +1011,7 @@ router.route("/saveenrolledinfo/").post((req, res) => {
     if (err) {
       throw err;
     }
-    saveStudentHistory(req, req.body.studentId,"U","Enrolment info updated");
+    saveStudentHistory(req, req.body.studentId, "U", "Enrolment info updated");
     connection.query(
       deleteQueryPrefix,
       deleteQueryUpdateValues,
@@ -1069,4 +1075,65 @@ router.route("/saveenrolledinfo/").post((req, res) => {
     );
   });
 });
+
+router.route("/validatephonenumber").post((req, res) => {
+  let queryPrefix = "select 1 from student";
+  let queryConditionValues = [];
+
+  queryPrefix = queryPrefix + " where phoneNumber=?";
+  queryConditionValues.push(req.body.phoneNumber);
+
+  connection.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
+    connection.query(queryPrefix, queryConditionValues, (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO STUDENT : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+      connection.commit(function (err) {
+        if (err) {
+          connection.rollback(function () {
+            throw err;
+          });
+        }
+        return res.json(rows);
+      });
+    });
+  });
+});
+
+router.route("/validateemail").post((req, res) => {
+  let queryPrefix = "select 1 from student";
+  let queryConditionValues = [];
+
+  queryPrefix = queryPrefix + " where email=?";
+  queryConditionValues.push(req.body.email);
+
+  connection.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
+    connection.query(queryPrefix, queryConditionValues, (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO STUDENT : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+      connection.commit(function (err) {
+        if (err) {
+          connection.rollback(function () {
+            throw err;
+          });
+        }
+        return res.json(rows);
+      });
+    });
+  });
+});
+
 module.exports = router;
