@@ -17,8 +17,9 @@ CREATE TABLE `student` (
   `lastUpdateUser` varchar(50) DEFAULT NULL,
   `lastUpdateTime` datetime DEFAULT NULL,
   `additionalPhNo` bigint DEFAULT NULL,
+  `officeCode` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE englishexam; 
@@ -56,12 +57,14 @@ CREATE TABLE `education` (
 
  DROP TABLE user;
  CREATE TABLE `user` (
-   `userId` int NOT NULL AUTO_INCREMENT,
-   `userName` varchar(50) NOT NULL,
-   `password` varchar(100) NOT NULL,
-   `userType` varchar(10) DEFAULT NULL,
-   PRIMARY KEY (`userId`,`userName`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `userId` int NOT NULL AUTO_INCREMENT,
+  `userName` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `userType` varchar(10) DEFAULT NULL,
+  `officeCode` varchar(25) DEFAULT NULL,
+  `usercol` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`userId`,`userName`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
  
  DROP TABLE studenthistory;
  CREATE TABLE `studenthistory` (
@@ -71,8 +74,10 @@ CREATE TABLE `education` (
   `remarks` varchar(200) DEFAULT NULL,
   `lastUpdateUser` varchar(10) DEFAULT NULL,
   `lastUpdateTime` datetime DEFAULT NULL,
+  `officeCode` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`historyId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 

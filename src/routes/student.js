@@ -360,6 +360,9 @@ router.route("/getstudent").post((req, res) => {
     queryConditions = queryConditions + " AND STD.studentId= ?";
     queryConditionValues.push(req.body.studentId);
   }
+  queryConditions = queryConditions + " AND STD.officeCode= ?";
+  queryConditionValues.push(req.user.officeCode);
+
   queryConditions = queryConditions + " ORDER BY REM.toDoFollowUpSerNum,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
@@ -533,6 +536,7 @@ function saveStudentHistory(req, studentId, operationId, remarks) {
   studentHistoryQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
+  studentHistoryQueryInsertValues.push(req.user.officeCode);
   connection.query(
     studentHistoryQueryPrefix,
     studentHistoryQueryInsertValues,
@@ -626,6 +630,7 @@ function populateStudentPersonalDetails(req) {
   studentQueryInsertValues.push(
     convertToMySqlDateTime(new Date().toISOString())
   );
+  studentQueryInsertValues.push(req.user.officeCode);
   return { studentQueryPrefix, studentQueryInsertValues };
 }
 

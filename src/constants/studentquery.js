@@ -2,8 +2,8 @@ exports.ADD_STUDENT_QUERY =
   "INSERT INTO student " +
   "(firstName,middleName,lastName,email,phoneNumber,additionalPhNo," +
   "dateOfBirth,gender,maritalStatus,courseInterested," +
-  "followUpDate,status,priority,createdDate,lastUpdateUser,lastUpdateTime) " +
-  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  "followUpDate,status,priority,createdDate,lastUpdateUser,lastUpdateTime,officeCode) " +
+  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 exports.UPDATE_STUDENT_QUERY =
   "UPDATE student SET " +
@@ -16,7 +16,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     STD.studentId,STD.firstName,STD.middleName,STD.lastName,STD.email,STD.gender,
     STD.maritalStatus,STD.courseInterested,STD.status,STD.priority,
     STD.phoneNumber,STD.additionalPhNo,STD.followUpDate,STD.dateOfBirth,STD.createdDate,
-    STD.lastUpdateUser,STD.lastUpdateTime,EGX.overall,EGX.listening,EGX.reading,EGX.writing,EGX.speaking,
+    STD.lastUpdateUser,STD.lastUpdateTime,STD.officeCode,EGX.overall,EGX.listening,EGX.reading,EGX.writing,EGX.speaking,
     EGX.englishExamType,EGX.examDate,EGX.examId,EDU.countryOfEducation,EDU.highestLevelOfEducation,EDU.gradingScheme,
     EDU.gradeAverage,EDU.graduatedYear,WRK.companyName,WRK.position,WRK.endDate,WRK.startDate,WRK.workAddress,OFF.source,OFF.wayOfContact,OFF.counselor,OFF.priority,OFF.dateOfRequest,
     COU.intrId,COU.requestedCourse,COU.preferredCountry,

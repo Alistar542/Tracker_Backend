@@ -20,13 +20,15 @@ router.route("/login").post(async (req, res) => {
       return res.status(400).send("USER NOT FOUND");
     }
     try {
-      if (await bcrypt.compare(req.body.password, user.password)) {
-        const userJwt = { userName: user.userName, userType: user.userType };
+      if (await bcrypt.compare(req.body.password, user.password) && ((req.body.officeCode).toUpperCase()===user.officeCode)) {
+        const userJwt = { userName: user.userName, userType: user.userType ,officeCode:user.officeCode};
         const accessToken = jwt.sign(userJwt, process.env.ACCESS_SECRET_TOKEN);
         res.json({
           accessToken: accessToken,
           userName: user.userName,
           userType: user.userType,
+          officeCode:user.officeCode,
+
         });
       } else {
         res.status(403).send("INCORRECT PASSWORD");
