@@ -1,4 +1,4 @@
-exports.LOGIN_USER_QUERY = `SELECT * FROM user WHERE userName=?`;
+exports.LOGIN_USER_QUERY = `SELECT * FROM user WHERE userName=? and officeCode=?`;
 
-exports.CREATE_USER_QUERY = `INSERT INTO user (userName,password) values
-(?,?)`;
+exports.CREATE_USER_QUERY = `INSERT INTO user (userName,password,userType,officeCode) values
+(?,?,?,?)`;
