@@ -5,7 +5,7 @@ CREATE TABLE `student` (
   `middleName` varchar(45) DEFAULT NULL,
   `lastName` varchar(45) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
-  `phoneNumber` bigint DEFAULT NULL,
+  `phoneNumber` varchar(20) DEFAULT NULL,
   `dateOfBirth` datetime DEFAULT NULL,
   `gender` varchar(1) DEFAULT NULL,
   `maritalStatus` varchar(1) DEFAULT NULL,
@@ -16,10 +16,12 @@ CREATE TABLE `student` (
   `createdDate` datetime DEFAULT NULL,
   `lastUpdateUser` varchar(50) DEFAULT NULL,
   `lastUpdateTime` datetime DEFAULT NULL,
-  `additionalPhNo` bigint DEFAULT NULL,
+  `additionalPhNo` varchar(20) DEFAULT NULL,
   `officeCode` varchar(25) DEFAULT NULL,
+  `currentState` varchar(100) DEFAULT NULL,
+  `studentRemarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE englishexam; 
