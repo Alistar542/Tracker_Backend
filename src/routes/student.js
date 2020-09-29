@@ -147,6 +147,8 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(req.body.status);
   queryUpdateValues.push(req.user.userName);
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
+  queryUpdateValues.push(req.body.currentState);
+  queryUpdateValues.push(req.body.studentRemarks);
   queryUpdateValues.push(req.params.id);
 
   let englishExamQueryPrefix = STUDENT_QUERY.UPDATE_ENGLISH_EXAM_QUERY;
@@ -632,6 +634,8 @@ function populateStudentPersonalDetails(req) {
     convertToMySqlDateTime(new Date().toISOString())
   );
   studentQueryInsertValues.push(req.user.officeCode);
+  studentQueryInsertValues.push(req.body.currentState);
+  studentQueryInsertValues.push(req.body.studentRemarks);
   return { studentQueryPrefix, studentQueryInsertValues };
 }
 
@@ -989,6 +993,7 @@ router.route("/saveproposalinfo/").post((req, res) => {
           req.body.studentId,
           "Proposal"
         );
+        updateStudentFollowUpDetails(req);
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1135,5 +1140,25 @@ router.route("/validateemail").post((req, res) => {
     });
   });
 });
-
+function updateStudentFollowUpDetails(){
+        let updateQueryPrefix = STUDENT_QUERY.INSERT_ENROL_INFO;
+        let queryUpdateValues = [];
+        
+        queryUpdateValues.push(req.body.followUpDate);
+        queryUpdateValues.push(req.body.currentState);
+        queryUpdateValues.push(req.body.studentId);
+        
+        connection.query(
+          updateQueryPrefix,
+          queryUpdateValues,
+          (err, rows) => {
+            if (err) {
+              console.log("ERROR CONNECTING TO STUDENT : " + err);
+              return connection.rollback(function () {
+                throw err;
+              });
+            }
+          }
+        );
+}
 module.exports = router;
