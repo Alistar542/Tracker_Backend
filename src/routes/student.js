@@ -1068,6 +1068,7 @@ router.route("/saveenrolledinfo/").post((req, res) => {
           req.body.studentId,
           "Enrolled"
         );
+        updateStudentFollowUpDetails(req);
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
