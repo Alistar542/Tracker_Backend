@@ -1067,7 +1067,7 @@ router.route("/saveenrolledinfo/").post((req, res) => {
           req.body.studentId,
           "Enrolled"
         );
-        updateStudentFollowUpDetails(req);
+        //updateStudentFollowUpDetails(req);
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1141,7 +1141,7 @@ router.route("/validateemail").post((req, res) => {
   });
 });
 function updateStudentFollowUpDetails(req){
-        let updateQueryPrefix = STUDENT_QUERY.INSERT_ENROL_INFO;
+        let updateQueryPrefix = STUDENT_QUERY.UPDATE_STUDENT_FOLLOWUP_QUERY;
         let queryUpdateValues = [];
         
         queryUpdateValues.push(req.body.followUpDate);
