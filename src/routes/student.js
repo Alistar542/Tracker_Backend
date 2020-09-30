@@ -326,7 +326,6 @@ router.route("/getstudent").post((req, res) => {
   let queryPrefix = STUDENT_QUERY.FIND_STUDENT_QUERY;
   let queryConditions = "";
   let queryConditionValues = [];
-
   if (req.body.followUpDate) {
     queryConditions = queryConditions + " AND DATE(followUpDate)= ?";
     queryConditionValues.push(convertToMySqlDate(req.body.followUpDate));
@@ -1141,7 +1140,7 @@ router.route("/validateemail").post((req, res) => {
     });
   });
 });
-function updateStudentFollowUpDetails(){
+function updateStudentFollowUpDetails(req){
         let updateQueryPrefix = STUDENT_QUERY.INSERT_ENROL_INFO;
         let queryUpdateValues = [];
         
