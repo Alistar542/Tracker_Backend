@@ -20,8 +20,9 @@ CREATE TABLE `student` (
   `officeCode` varchar(25) DEFAULT NULL,
   `currentState` varchar(100) DEFAULT NULL,
   `studentRemarks` varchar(500) DEFAULT NULL,
+  `remarksStatus` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE englishexam; 

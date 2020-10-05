@@ -149,6 +149,7 @@ router.route("/update/:id").post((req, res) => {
   queryUpdateValues.push(convertToMySqlDateTime(new Date().toISOString()));
   queryUpdateValues.push(req.body.currentState);
   queryUpdateValues.push(req.body.studentRemarks);
+  queryUpdateValues.push(req.body.remarksStatus);
   queryUpdateValues.push(req.params.id);
 
   let englishExamQueryPrefix = STUDENT_QUERY.UPDATE_ENGLISH_EXAM_QUERY;
@@ -635,6 +636,7 @@ function populateStudentPersonalDetails(req) {
   studentQueryInsertValues.push(req.user.officeCode);
   studentQueryInsertValues.push(req.body.currentState);
   studentQueryInsertValues.push(req.body.studentRemarks);
+  studentQueryInsertValues.push(req.body.remarksStatus);
   return { studentQueryPrefix, studentQueryInsertValues };
 }
 
@@ -1146,6 +1148,7 @@ function updateStudentFollowUpDetails(req){
         
         queryUpdateValues.push(req.body.followUpDate);
         queryUpdateValues.push(req.body.currentState);
+        queryUpdateValues.push(req.body.remarksStatus);
         queryUpdateValues.push(req.body.studentId);
         
         connection.query(
