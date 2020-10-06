@@ -974,6 +974,9 @@ router.route("/saveproposalinfo/").post((req, res) => {
           insertQueryUpdateValues.push(
             convertToMySqlDateTime(req.body.proposalInfo.travelDate)
           );
+          insertQueryUpdateValues.push(
+            convertToMySqlDateTime(req.body.proposalInfo.studentRemarks)
+          );
           connection.query(
             insertQueryPrefix,
             insertQueryUpdateValues,
@@ -994,7 +997,8 @@ router.route("/saveproposalinfo/").post((req, res) => {
           req.body.studentId,
           "Proposal"
         );
-        updateStudentFollowUpDetails(req);
+        updateStudentFollowUpDetails(req,req.body.proposalInfo.followUpDate,
+          req.body.proposalInfo.currentState,req.body.proposalInfo.remarksStatus);
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1048,6 +1052,9 @@ router.route("/saveenrolledinfo/").post((req, res) => {
         insertQueryUpdateValues.push(
           convertToMySqlDateTime(req.body.enrolledInfo.invoiceDate)
         );
+        insertQueryUpdateValues.push(
+          convertToMySqlDateTime(req.body.enrolledInfo.studentRemarks)
+        );
 
         connection.query(
           insertQueryPrefix,
@@ -1069,7 +1076,8 @@ router.route("/saveenrolledinfo/").post((req, res) => {
           req.body.studentId,
           "Enrolled"
         );
-        //updateStudentFollowUpDetails(req);
+        updateStudentFollowUpDetails(req,req.body.enrolledInfo.followUpDate,
+          req.body.enrolledInfo.currentState,req.body.enrolledInfo.remarksStatus);
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1142,13 +1150,13 @@ router.route("/validateemail").post((req, res) => {
     });
   });
 });
-function updateStudentFollowUpDetails(req){
+function updateStudentFollowUpDetails(req,followUpDate,currentState,remarksStatus){
         let updateQueryPrefix = STUDENT_QUERY.UPDATE_STUDENT_FOLLOWUP_QUERY;
         let queryUpdateValues = [];
         
-        queryUpdateValues.push(req.body.followUpDate);
-        queryUpdateValues.push(req.body.currentState);
-        queryUpdateValues.push(req.body.remarksStatus);
+        queryUpdateValues.push(convertToMySqlDate(followUpDate));
+        queryUpdateValues.push(currentState);
+        queryUpdateValues.push(remarksStatus);
         queryUpdateValues.push(req.body.studentId);
         
         connection.query(

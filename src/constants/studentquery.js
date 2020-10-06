@@ -14,7 +14,7 @@ exports.UPDATE_STUDENT_QUERY =
 
 exports.UPDATE_STUDENT_FOLLOWUP_QUERY=
 `UPDATE student
-  SET followUpDate=? ,studentRemarks=?,remarksStatus=? WHERE studentId= ?`
+  SET followUpDate=?, currentState=?,remarksStatus=? WHERE studentId= ?`
 
 exports.FIND_STUDENT_QUERY = `SELECT 
     STD.studentId,STD.firstName,STD.middleName,STD.lastName,STD.email,STD.gender,
@@ -27,7 +27,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     REM.toDoFollowUpSerNum,REM.toDoSerNum,REM.followUpSerNum,REM.remarks,REM.remarkType,REM.userName,REM.screenName,
     PRO.proposalId,PRO.applnId,PRO.appldUnvsty,PRO.appldCourse,PRO.appldCourseTyp,PRO.appldDate,PRO.offrLtrStatus,
     PRO.offrLtrDate,PRO.visaLtrStatus,PRO.visaLtrDate,PRO.feesPaid,PRO.courseStrtDate,PRO.stdUsrName,PRO.stdPwd,PRO.applStatus,
-    PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,
+    PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,PRO.studentRemarks,
     ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
     ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency
     FROM student STD
@@ -94,13 +94,13 @@ SET status=? WHERE studentId= ?`
 
 exports.INSERT_PROPOSAL_INFO=`INSERT INTO proposal
 (studentId,proposalId,applnId,appldUnvsty,appldCourse,appldCourseTyp,appldDate,offrLtrStatus,offrLtrDate,visaLtrStatus,visaLtrDate,
-feesPaid,courseStrtDate,stdUsrName,stdPwd,applStatus,visaApplnStatus,visaStatus,visaApplnPrcDate,visaAppvd,visaApRjDate,travelDate)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+feesPaid,courseStrtDate,stdUsrName,stdPwd,applStatus,visaApplnStatus,visaStatus,visaApplnPrcDate,visaAppvd,visaApRjDate,travelDate,studentRemarks)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_PROPOSAL_INFO=`DELETE FROM proposal WHERE studentId=?`
 
 exports.INSERT_ENROL_INFO=`INSERT INTO enrolled
 (studentId,enrolId,totalTutionFees,annualTutionFees,totalCommission,firstCommission,courseStartingDate,balanceCommission,currency,nextInvoiceDate,
-  invoiceDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)`
+  invoiceDate,studentRemarks) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_ENROL_INFO=`DELETE FROM enrolled WHERE studentId=?`

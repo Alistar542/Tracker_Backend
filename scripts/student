@@ -167,10 +167,11 @@ CREATE TABLE `proposal` (
   `visaAppvd` varchar(30) DEFAULT NULL,
   `visaApRjDate` datetime DEFAULT NULL,
   `travelDate` datetime DEFAULT NULL,
+  `studentRemarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`propSerNum`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `proposal_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 DROP TABLE enrolled;
@@ -186,6 +187,7 @@ CREATE TABLE `enrolled` (
   `currency` varchar(5) DEFAULT NULL,
   `nextInvoiceDate` datetime DEFAULT NULL,
   `invoiceDate` datetime DEFAULT NULL,
+  `studentRemarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`enrolId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `enrolled_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
