@@ -58,16 +58,14 @@ CREATE TABLE `education` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
- DROP TABLE user;
  CREATE TABLE `user` (
   `userId` int NOT NULL AUTO_INCREMENT,
   `userName` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
   `userType` varchar(10) DEFAULT NULL,
   `officeCode` varchar(25) DEFAULT NULL,
-  `usercol` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`userId`,`userName`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
  
  DROP TABLE studenthistory;
  CREATE TABLE `studenthistory` (
