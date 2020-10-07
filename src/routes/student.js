@@ -670,6 +670,10 @@ function mapResponse(res, rows) {
         nextInvoiceDate: row.nextInvoiceDate,
         invoiceDate: row.invoiceDate,
         currency: row.currency,
+        followUpDate:row.followUpDate,
+        currentState:row.currentState,
+        remarksStatus:row.remarksStatus,
+        studentRemarks:row.enrolledStudentRemarks
       };
       row.enrolledInfo = enrolledData;
     }
@@ -753,6 +757,10 @@ function mapResponse(res, rows) {
           visaApplnPrcDate: row.visaApplnPrcDate,
           visaApRjDate: row.visaApRjDate,
           travelDate: row.travelDate,
+          followUpDate:row.followUpDate,
+          currentState:row.currentState,
+          remarksStatus:row.remarksStatus,
+          studentRemarks:row.proposalStudentRemarks,
           applicationDetails: [
             {
               applnId: row.applnId,
@@ -785,6 +793,10 @@ function mapResponse(res, rows) {
           visaApplnPrcDate: row.visaApplnPrcDate,
           visaApRjDate: row.visaApRjDate,
           travelDate: row.travelDate,
+          followUpDate:row.followUpDate,
+          currentState:row.currentState,
+          remarksStatus:row.remarksStatus,
+          studentRemarks:row.proposalStudentRemarks,
           applicationDetails: [
             {
               applnId: row.applnId,

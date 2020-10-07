@@ -27,9 +27,9 @@ exports.FIND_STUDENT_QUERY = `SELECT
     REM.toDoFollowUpSerNum,REM.toDoSerNum,REM.followUpSerNum,REM.remarks,REM.remarkType,REM.userName,REM.screenName,
     PRO.proposalId,PRO.applnId,PRO.appldUnvsty,PRO.appldCourse,PRO.appldCourseTyp,PRO.appldDate,PRO.offrLtrStatus,
     PRO.offrLtrDate,PRO.visaLtrStatus,PRO.visaLtrDate,PRO.feesPaid,PRO.courseStrtDate,PRO.stdUsrName,PRO.stdPwd,PRO.applStatus,
-    PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,PRO.studentRemarks,
+    PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,PRO.studentRemarks proposalStudentRemarks,
     ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
-    ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency
+    ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency,ENR.studentRemarks enrolledStudentRemarks
     FROM student STD
     LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
     LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
