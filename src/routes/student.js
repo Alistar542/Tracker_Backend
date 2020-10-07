@@ -366,7 +366,7 @@ router.route("/getstudent").post((req, res) => {
   queryConditions = queryConditions + " AND STD.officeCode= ?";
   queryConditionValues.push(req.user.officeCode);
 
-  queryConditions = queryConditions + " ORDER BY REM.toDoFollowUpSerNum,studentId DESC";
+  queryConditions = queryConditions + " ORDER BY COU.intrId,REM.toDoFollowUpSerNum,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
