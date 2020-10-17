@@ -800,7 +800,7 @@ function mapResponse(res, rows) {
         educationDetails = row.educationDetails;
         educationDetails.push(element);
         row.educationDetails = educationDetails;
-        educationHisMap.set(interestedCouresesKey, row);
+        educationHisMap.set(educationHistoryKey, row);
         hashmap.set(masterKey, row);
       }
     }
