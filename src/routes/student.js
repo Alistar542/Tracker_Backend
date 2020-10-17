@@ -24,6 +24,7 @@ router.route("/add").post((req, res) => {
     educationQueryInsertValues,
     educationQueryPrefix,
   } = populateEducationDetails(req);
+  
 
   let {
     workExperienceQueryInsertValues,
@@ -106,6 +107,9 @@ router.route("/add").post((req, res) => {
         if (req.body.requestedCourseDetails) {
           populateInterestedCourses(rows, req);
         }
+        
+        populateEducationalDetails(rows.insertId, req);
+        
         populateToDoFollowUpDetails(
           req,
           req.body.followUpRemarks,
@@ -310,7 +314,7 @@ router.route("/update/:id").post((req, res) => {
         req.params.id,
         "Prospectus"
       );
-
+      populateEducationalDetails(req.params.id, req);
       connection.commit(function (err) {
         if (err) {
           connection.rollback(function () {
@@ -528,6 +532,57 @@ function populateInterestedCourses(rows, req) {
   }
 }
 
+
+function populateEducationalDetails(id, req) {
+  let educationHistoryQuery =
+    STUDENT_QUERY.DELETE_EDUCATION_HISTORY;
+  let educationHistoryQueryValue = [];
+  educationHistoryQueryValue[0] = id;
+  connection.query(
+    educationHistoryQuery,
+    educationHistoryQueryValue,
+    (err, rows) => {
+      if (err) {
+        console.log("ERROR CONNECTING TO HISTORY COURSES : " + err);
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+    }
+  );
+  if (req.body.educationDetails) {
+  for (let i = 0; i < req.body.educationDetails.length; i++) {
+    let educationHistoryQuery = STUDENT_QUERY.INSERT_EDUCATION_HISTORY;
+    let educationHistoryQueryValues = [];
+    educationHistoryQueryValues[0] = id;
+    educationHistoryQueryValues.push(i + 1);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].address);
+    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedFromDate));
+    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate));
+    educationHistoryQueryValues.push(req.body.educationDetails[i].degreeAwarded);
+    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate));
+    educationHistoryQueryValues.push(req.body.educationDetails[i].educationLevel);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].institutionCountry);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].institutionName);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].primaryLanguage);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].province);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].zipCode);
+    connection.query(
+      educationHistoryQuery,
+      educationHistoryQueryValues,
+      (err, rows) => {
+        if (err) {
+          console.log("ERROR CONNECTING TO INTERESTED COURSES : " + err);
+          return connection.rollback(function () {
+            throw err;
+          });
+        }
+      }
+    );
+  }
+  }
+}
+
 function saveStudentHistory(req, studentId, operationId, remarks) {
   let studentHistoryQueryPrefix =
     STUDENT_HISTORY_QUERY.ADD_STUDENT_HISTORY_QUERY;
@@ -643,10 +698,12 @@ function populateStudentPersonalDetails(req) {
 function mapResponse(res, rows) {
   let hashmap = new HashMap();
   let intCourMap = new HashMap();
+  let educationHisMap=new HashMap();
   let toDoFollowUpMap = new HashMap();
   let newRows = [];
   for (i = 0; i < rows.length; i++) {
     let requestedCourseDetails = [];
+    let educationDetails = [];
     let row = rows[i];
 
     let interestedCouresesKey =
@@ -654,6 +711,7 @@ function mapResponse(res, rows) {
     let masterKey = row.studentId + row.phoneNumber + row.email;
     let toDoFollowUpRemarksKey =
       row.studentId + row.phoneNumber + row.email + row.toDoFollowUpSerNum;
+    let educationHistoryKey = row.studentId + row.phoneNumber + row.email + row.eduHisId;
     if (
       row.courseStartingDate ||
       row.currency ||
@@ -699,6 +757,50 @@ function mapResponse(res, rows) {
         requestedCourseDetails.push(element);
         row.requestedCourseDetails = requestedCourseDetails;
         intCourMap.set(interestedCouresesKey, row);
+        hashmap.set(masterKey, row);
+      }
+    }
+    // newbegin
+    if (row.eduHisId === 1 && !educationHisMap.has(educationHistoryKey)) {
+      if (row.institutionName) {
+        let element = {
+          address: row.address,
+          attendedFromDate: row.attendedFromDate,
+          attendedToDate: row.attendedToDate,
+          degreeAwarded: row.degreeAwarded,
+          degreeAwardedOn: row.degreeAwardedOn,
+          educationLevel: row.educationLevel,
+          institutionCountry: row.institutionCountry,
+          institutionName: row.institutionName,
+          primaryLanguage: row.primaryLanguage,
+          province: row.province,
+          zipCode: row.zipCode
+        };
+        educationDetails.push(element);
+        row.educationDetails = educationDetails;
+        educationHisMap.set(educationHistoryKey, row);
+        hashmap.set(masterKey, row);
+      }
+    } else if (row.eduHisId > 1 && !educationHisMap.has(educationHistoryKey)) {
+      if (row.institutionName) {
+        let element = {
+          address: row.address,
+          attendedFromDate: row.attendedFromDate,
+          attendedToDate: row.attendedToDate,
+          degreeAwarded: row.degreeAwarded,
+          degreeAwardedOn: row.degreeAwardedOn,
+          educationLevel: row.educationLevel,
+          institutionCountry: row.institutionCountry,
+          institutionName: row.institutionName,
+          primaryLanguage: row.primaryLanguage,
+          province: row.province,
+          zipCode: row.zipCode
+        };
+        row = hashmap.get(masterKey);
+        educationDetails = row.educationDetails;
+        educationDetails.push(element);
+        row.educationDetails = educationDetails;
+        educationHisMap.set(interestedCouresesKey, row);
         hashmap.set(masterKey, row);
       }
     }

@@ -190,3 +190,23 @@ CREATE TABLE `enrolled` (
   KEY `studentId` (`studentId`),
   CONSTRAINT `enrolled_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE educationhistory;
+CREATE TABLE `educationhistory` (
+  `studentId` int NOT NULL,
+  `eduHisId` int NOT NULL,
+  `address` varchar(100) NOT NULL,
+  `attendedFromDate` datetime DEFAULT NULL,
+  `attendedToDate` datetime DEFAULT NULL,
+  `degreeAwarded` varchar(50) DEFAULT NULL,
+  `degreeAwardedOn` datetime DEFAULT NULL,
+  `educationLevel` varchar(50) DEFAULT NULL,
+  `institutionCountry` varchar(30) DEFAULT NULL,
+  `institutionName` varchar(50) DEFAULT NULL,
+  `primaryLanguage` varchar(30) DEFAULT NULL,
+  `province` varchar(30) DEFAULT NULL,
+  `zipCode` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`eduHisId`),
+  KEY `studentId` (`studentId`),
+  CONSTRAINT `educationhistory_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
+) ENGINE=InnoDB  CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

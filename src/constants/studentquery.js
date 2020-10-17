@@ -29,16 +29,19 @@ exports.FIND_STUDENT_QUERY = `SELECT
     PRO.offrLtrDate,PRO.visaLtrStatus,PRO.visaLtrDate,PRO.feesPaid,PRO.courseStrtDate,PRO.stdUsrName,PRO.stdPwd,PRO.applStatus,
     PRO.visaApplnStatus,PRO.visaStatus,PRO.visaApplnPrcDate,PRO.visaAppvd,PRO.visaApRjDate,PRO.travelDate,PRO.studentRemarks proposalStudentRemarks,
     ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
-    ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency,ENR.studentRemarks enrolledStudentRemarks
+    ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency,ENR.studentRemarks enrolledStudentRemarks,
+    EDUHIS.eduHisId,EDUHIS.address,EDUHIS.attendedFromDate,EDUHIS.attendedToDate,EDUHIS.degreeAwarded,EDUHIS.degreeAwardedOn,
+    EDUHIS.educationLevel, EDUHIS.institutionCountry, EDUHIS.institutionName,EDUHIS.primaryLanguage,EDUHIS.province,EDUHIS.zipCode
     FROM student STD
     LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
     LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
     LEFT JOIN workexperience WRK ON STD.studentId=WRK.studentId
     LEFT JOIN officedata OFF ON STD.studentId=OFF.studentId
-    LEFT JOIN interestedcourses COU ON STD.studentId=COU.studentId
+    LEFT JOIN interestedcourses COU ON STD.studentId=COU.studentId  
     LEFT JOIN todofollowupremarks REM ON STD.studentId=REM.studentId
     LEFT JOIN proposal PRO ON STD.studentId=PRO.studentId
     LEFT JOIN enrolled ENR ON STD.studentId=ENR.studentId
+    LEFT JOIN educationhistory EDUHIS ON STD.studentId=EDUHIS.studentId
     WHERE 1=1`;
 
 
@@ -104,3 +107,9 @@ exports.INSERT_ENROL_INFO=`INSERT INTO enrolled
   invoiceDate,studentRemarks) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_ENROL_INFO=`DELETE FROM enrolled WHERE studentId=?`
+
+exports.INSERT_EDUCATION_HISTORY=`INSERT INTO educationhistory(studentId,eduHisId,address,attendedFromDate,attendedToDate,
+degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,primaryLanguage,province,zipCode)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+exports.DELETE_EDUCATION_HISTORY=`DELETE FROM educationhistory WHERE studentId=?`
