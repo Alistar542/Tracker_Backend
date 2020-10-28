@@ -175,9 +175,8 @@ router.route("/update/:id").post((req, res) => {
   educationQueryInsertValues.push(req.body.highestLevelOfEducation);
   educationQueryInsertValues.push(req.body.gradingScheme);
   educationQueryInsertValues.push(req.body.gradeAverage);
-  educationQueryInsertValues.push(
-    convertToMySqlDateTime(req.body.graduatedYear)
-  );
+  educationQueryInsertValues.push(convertToMySqlDateTime(req.body.graduatedYear));
+  educationQueryInsertValues.push(req.body.eduCourseType);
   educationQueryInsertValues.push(req.params.id);
 
   let workExperienceQueryPrefix = STUDENT_QUERY.UPDATE_WORK_EXPERIENCE_QUERY;
@@ -286,12 +285,9 @@ router.route("/update/:id").post((req, res) => {
           let interestedCourseQueryValues = [];
           interestedCourseQueryValues[0] = req.params.id;
           interestedCourseQueryValues.push(i + 1);
-          interestedCourseQueryValues.push(
-            req.body.requestedCourseDetails[i].requestedCourse
-          );
-          interestedCourseQueryValues.push(
-            req.body.requestedCourseDetails[i].preferredCountry
-          );
+          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].requestedCourse);
+          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].preferredCountry);
+          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].intEduLevel);
 
           connection.query(
             interestedCourseQuery,
@@ -516,6 +512,7 @@ function populateInterestedCourses(rows, req) {
     interestedCourseQueryValues.push(
       req.body.requestedCourseDetails[i].preferredCountry
     );
+    interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].intEduLevel);
 
     connection.query(
       interestedCourseQuery,
@@ -645,6 +642,7 @@ function populateEducationDetails(req) {
   educationQueryInsertValues.push(req.body.highestLevelOfEducation);
   educationQueryInsertValues.push(req.body.gradingScheme);
   educationQueryInsertValues.push(req.body.gradeAverage);
+  educationQueryInsertValues.push(req.body.eduCourseType);
   educationQueryInsertValues.push(
     convertToMySqlDateTime(req.body.graduatedYear)
   );
@@ -740,6 +738,7 @@ function mapResponse(res, rows) {
         let element = {
           requestedCourse: row.requestedCourse,
           preferredCountry: row.preferredCountry,
+          intEduLevel:row.intEduLevel,
         };
         requestedCourseDetails.push(element);
         row.requestedCourseDetails = requestedCourseDetails;
@@ -751,6 +750,7 @@ function mapResponse(res, rows) {
         let element = {
           requestedCourse: row.requestedCourse,
           preferredCountry: row.preferredCountry,
+          intEduLevel:row.intEduLevel,
         };
         row = hashmap.get(masterKey);
         requestedCourseDetails = row.requestedCourseDetails;

@@ -52,6 +52,7 @@ CREATE TABLE `education` (
   `gradingScheme` varchar(20) DEFAULT NULL,
   `gradeAverage` varchar(10) DEFAULT NULL,
   `graduatedYear` datetime DEFAULT NULL,
+  `eduCourseType` VARCHAR(50) DEFAULT NULL,
   PRIMARY KEY (`educationId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `education_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
@@ -88,6 +89,7 @@ CREATE TABLE `interestedcourses` (
   `intrId` int NOT NULL,
   `requestedCourse` varchar(50) NOT NULL,
   `preferredCountry` varchar(40) DEFAULT NULL,
+  `intEduLevel` VARCHAR(50) DEFAULT NULL,
   KEY `studentId` (`studentId`),
   CONSTRAINT `interestedcourses_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -210,3 +212,11 @@ CREATE TABLE `educationhistory` (
   KEY `studentId` (`studentId`),
   CONSTRAINT `educationhistory_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
 ) ENGINE=InnoDB  CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+//New
+ALTER TABLE `student_tracker`.`education` 
+ADD COLUMN `eduCourseType` VARCHAR(50) NULL AFTER `graduatedYear`;
+
+ALTER TABLE `student_tracker`.`interestedcourses` 
+ADD COLUMN `intEduLevel` VARCHAR(50) NULL AFTER `preferredCountry`;
+
