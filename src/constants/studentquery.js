@@ -31,7 +31,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
     ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency,ENR.studentRemarks enrolledStudentRemarks,
     EDUHIS.eduHisId,EDUHIS.address,EDUHIS.attendedFromDate,EDUHIS.attendedToDate,EDUHIS.degreeAwarded,EDUHIS.degreeAwardedOn,
-    EDUHIS.educationLevel, EDUHIS.institutionCountry, EDUHIS.institutionName,EDUHIS.primaryLanguage,EDUHIS.province,EDUHIS.zipCode
+    EDUHIS.educationLevel, EDUHIS.institutionCountry, EDUHIS.institutionName,EDUHIS.primaryLanguage,EDUHIS.city,EDUHIS.province,EDUHIS.zipCode
     FROM student STD
     LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
     LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
@@ -56,7 +56,7 @@ exports.UPDATE_ENGLISH_EXAM_QUERY = `UPDATE englishexam
 
 exports.ADD_EDUCATION_QUERY = `INSERT INTO education 
 (studentId,countryOfEducation,highestLevelOfEducation,
-    gradingScheme,gradeAverage,graduatedYear,eduCourseType) 
+    gradingScheme,gradeAverage,eduCourseType,graduatedYear) 
     VALUES(?,?,?,?,?,?,?)`;
 exports.UPDATE_EDUCATION_QUERY = `UPDATE education
     SET studentId=?,countryOfEducation=?,highestLevelOfEducation=?,
@@ -109,7 +109,7 @@ exports.INSERT_ENROL_INFO=`INSERT INTO enrolled
 exports.DELETE_ENROL_INFO=`DELETE FROM enrolled WHERE studentId=?`
 
 exports.INSERT_EDUCATION_HISTORY=`INSERT INTO educationhistory(studentId,eduHisId,address,attendedFromDate,attendedToDate,
-degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,primaryLanguage,province,zipCode)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,primaryLanguage,city,province,zipCode)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_EDUCATION_HISTORY=`DELETE FROM educationhistory WHERE studentId=?`

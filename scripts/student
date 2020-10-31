@@ -206,12 +206,14 @@ CREATE TABLE `educationhistory` (
   `institutionCountry` varchar(30) DEFAULT NULL,
   `institutionName` varchar(50) DEFAULT NULL,
   `primaryLanguage` varchar(30) DEFAULT NULL,
+  `city` varchar(45) DEFAULT NULL,
   `province` varchar(30) DEFAULT NULL,
   `zipCode` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`eduHisId`),
+  PRIMARY KEY (`studentId`,`eduHisId`),
   KEY `studentId` (`studentId`),
   CONSTRAINT `educationhistory_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `student` (`studentId`)
-) ENGINE=InnoDB  CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 //New
 ALTER TABLE `student_tracker`.`education` 

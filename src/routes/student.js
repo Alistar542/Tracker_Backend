@@ -359,14 +359,24 @@ router.route("/getstudent").post((req, res) => {
     );
     queryConditionValues.push(convertToMySqlDateTime(req.body.creationToDate));
   }
+  else if (req.body.creationFromDate) {
+    queryConditions = queryConditions + " AND STD.createdDate > ?";
+    queryConditionValues.push(
+      convertToMySqlDateTime(req.body.creationFromDate)
+    );    
+  }
   if (req.body.studentId) {
     queryConditions = queryConditions + " AND STD.studentId= ?";
     queryConditionValues.push(req.body.studentId);
   }
+  if (req.body.source) {
+    queryConditions = queryConditions + " AND OFF.source= ?";
+    queryConditionValues.push(req.body.source);
+  }
   queryConditions = queryConditions + " AND STD.officeCode= ?";
   queryConditionValues.push(req.user.officeCode);
 
-  queryConditions = queryConditions + " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,studentId DESC";
+  queryConditions = queryConditions + " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
@@ -562,6 +572,7 @@ function populateEducationalDetails(id, req) {
     educationHistoryQueryValues.push(req.body.educationDetails[i].institutionCountry);
     educationHistoryQueryValues.push(req.body.educationDetails[i].institutionName);
     educationHistoryQueryValues.push(req.body.educationDetails[i].primaryLanguage);
+    educationHistoryQueryValues.push(req.body.educationDetails[i].city);
     educationHistoryQueryValues.push(req.body.educationDetails[i].province);
     educationHistoryQueryValues.push(req.body.educationDetails[i].zipCode);
     connection.query(
@@ -773,6 +784,7 @@ function mapResponse(res, rows) {
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
           primaryLanguage: row.primaryLanguage,
+          city:row.city,
           province: row.province,
           zipCode: row.zipCode
         };
@@ -793,6 +805,7 @@ function mapResponse(res, rows) {
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
           primaryLanguage: row.primaryLanguage,
+          city:row.city,
           province: row.province,
           zipCode: row.zipCode
         };
