@@ -24,7 +24,6 @@ router.route("/add").post((req, res) => {
     educationQueryInsertValues,
     educationQueryPrefix,
   } = populateEducationDetails(req);
-  
 
   let {
     workExperienceQueryInsertValues,
@@ -107,9 +106,9 @@ router.route("/add").post((req, res) => {
         if (req.body.requestedCourseDetails) {
           populateInterestedCourses(rows, req);
         }
-        
+
         populateEducationalDetails(rows.insertId, req);
-        
+
         populateToDoFollowUpDetails(
           req,
           req.body.followUpRemarks,
@@ -175,7 +174,9 @@ router.route("/update/:id").post((req, res) => {
   educationQueryInsertValues.push(req.body.highestLevelOfEducation);
   educationQueryInsertValues.push(req.body.gradingScheme);
   educationQueryInsertValues.push(req.body.gradeAverage);
-  educationQueryInsertValues.push(convertToMySqlDateTime(req.body.graduatedYear));
+  educationQueryInsertValues.push(
+    convertToMySqlDateTime(req.body.graduatedYear)
+  );
   educationQueryInsertValues.push(req.body.eduCourseType);
   educationQueryInsertValues.push(req.params.id);
 
@@ -285,9 +286,15 @@ router.route("/update/:id").post((req, res) => {
           let interestedCourseQueryValues = [];
           interestedCourseQueryValues[0] = req.params.id;
           interestedCourseQueryValues.push(i + 1);
-          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].requestedCourse);
-          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].preferredCountry);
-          interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].intEduLevel);
+          interestedCourseQueryValues.push(
+            req.body.requestedCourseDetails[i].requestedCourse
+          );
+          interestedCourseQueryValues.push(
+            req.body.requestedCourseDetails[i].preferredCountry
+          );
+          interestedCourseQueryValues.push(
+            req.body.requestedCourseDetails[i].intEduLevel
+          );
 
           connection.query(
             interestedCourseQuery,
@@ -335,7 +342,7 @@ router.route("/getstudent").post((req, res) => {
   if (req.body.firstName) {
     let firstName = req.body.firstName ? req.body.firstName.toLowerCase() : "";
     queryConditions = queryConditions + " AND STD.firstName LIKE ?";
-    queryConditionValues.push(firstName+'%');
+    queryConditionValues.push(firstName + "%");
   }
 
   if (req.body.status) {
@@ -358,12 +365,11 @@ router.route("/getstudent").post((req, res) => {
       convertToMySqlDateTime(req.body.creationFromDate)
     );
     queryConditionValues.push(convertToMySqlDateTime(req.body.creationToDate));
-  }
-  else if (req.body.creationFromDate) {
+  } else if (req.body.creationFromDate) {
     queryConditions = queryConditions + " AND STD.createdDate > ?";
     queryConditionValues.push(
       convertToMySqlDateTime(req.body.creationFromDate)
-    );    
+    );
   }
   if (req.body.studentId) {
     queryConditions = queryConditions + " AND STD.studentId= ?";
@@ -371,12 +377,14 @@ router.route("/getstudent").post((req, res) => {
   }
   if (req.body.source) {
     queryConditions = queryConditions + " AND OFF.source LIKE ?";
-    queryConditionValues.push(req.body.source+'%');
+    queryConditionValues.push(req.body.source + "%");
   }
   queryConditions = queryConditions + " AND STD.officeCode= ?";
   queryConditionValues.push(req.user.officeCode);
 
-  queryConditions = queryConditions + " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
+  queryConditions =
+    queryConditions +
+    " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
@@ -522,7 +530,9 @@ function populateInterestedCourses(rows, req) {
     interestedCourseQueryValues.push(
       req.body.requestedCourseDetails[i].preferredCountry
     );
-    interestedCourseQueryValues.push(req.body.requestedCourseDetails[i].intEduLevel);
+    interestedCourseQueryValues.push(
+      req.body.requestedCourseDetails[i].intEduLevel
+    );
 
     connection.query(
       interestedCourseQuery,
@@ -539,10 +549,8 @@ function populateInterestedCourses(rows, req) {
   }
 }
 
-
 function populateEducationalDetails(id, req) {
-  let educationHistoryQuery =
-    STUDENT_QUERY.DELETE_EDUCATION_HISTORY;
+  let educationHistoryQuery = STUDENT_QUERY.DELETE_EDUCATION_HISTORY;
   let educationHistoryQueryValue = [];
   educationHistoryQueryValue[0] = id;
   connection.query(
@@ -558,36 +566,52 @@ function populateEducationalDetails(id, req) {
     }
   );
   if (req.body.educationDetails) {
-  for (let i = 0; i < req.body.educationDetails.length; i++) {
-    let educationHistoryQuery = STUDENT_QUERY.INSERT_EDUCATION_HISTORY;
-    let educationHistoryQueryValues = [];
-    educationHistoryQueryValues[0] = id;
-    educationHistoryQueryValues.push(i + 1);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].address);
-    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedFromDate));
-    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate));
-    educationHistoryQueryValues.push(req.body.educationDetails[i].degreeAwarded);
-    educationHistoryQueryValues.push(convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate));
-    educationHistoryQueryValues.push(req.body.educationDetails[i].educationLevel);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].institutionCountry);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].institutionName);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].primaryLanguage);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].city);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].province);
-    educationHistoryQueryValues.push(req.body.educationDetails[i].zipCode);
-    connection.query(
-      educationHistoryQuery,
-      educationHistoryQueryValues,
-      (err, rows) => {
-        if (err) {
-          console.log("ERROR CONNECTING TO INTERESTED COURSES : " + err);
-          return connection.rollback(function () {
-            throw err;
-          });
+    for (let i = 0; i < req.body.educationDetails.length; i++) {
+      let educationHistoryQuery = STUDENT_QUERY.INSERT_EDUCATION_HISTORY;
+      let educationHistoryQueryValues = [];
+      educationHistoryQueryValues[0] = id;
+      educationHistoryQueryValues.push(i + 1);
+      educationHistoryQueryValues.push(req.body.educationDetails[i].address);
+      educationHistoryQueryValues.push(
+        convertToMySqlDateTime(req.body.educationDetails[i].attendedFromDate)
+      );
+      educationHistoryQueryValues.push(
+        convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate)
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].degreeAwarded
+      );
+      educationHistoryQueryValues.push(
+        convertToMySqlDateTime(req.body.educationDetails[i].attendedToDate)
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].educationLevel
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].institutionCountry
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].institutionName
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].primaryLanguage
+      );
+      educationHistoryQueryValues.push(req.body.educationDetails[i].city);
+      educationHistoryQueryValues.push(req.body.educationDetails[i].province);
+      educationHistoryQueryValues.push(req.body.educationDetails[i].zipCode);
+      connection.query(
+        educationHistoryQuery,
+        educationHistoryQueryValues,
+        (err, rows) => {
+          if (err) {
+            console.log("ERROR CONNECTING TO INTERESTED COURSES : " + err);
+            return connection.rollback(function () {
+              throw err;
+            });
+          }
         }
-      }
-    );
-  }
+      );
+    }
   }
 }
 
@@ -707,7 +731,7 @@ function populateStudentPersonalDetails(req) {
 function mapResponse(res, rows) {
   let hashmap = new HashMap();
   let intCourMap = new HashMap();
-  let educationHisMap=new HashMap();
+  let educationHisMap = new HashMap();
   let toDoFollowUpMap = new HashMap();
   let newRows = [];
   for (i = 0; i < rows.length; i++) {
@@ -720,7 +744,8 @@ function mapResponse(res, rows) {
     let masterKey = row.studentId + row.phoneNumber + row.email;
     let toDoFollowUpRemarksKey =
       row.studentId + row.phoneNumber + row.email + row.toDoFollowUpSerNum;
-    let educationHistoryKey = row.studentId + row.phoneNumber + row.email + row.eduHisId;
+    let educationHistoryKey =
+      row.studentId + row.phoneNumber + row.email + row.eduHisId;
     if (
       row.courseStartingDate ||
       row.currency ||
@@ -737,10 +762,10 @@ function mapResponse(res, rows) {
         nextInvoiceDate: row.nextInvoiceDate,
         invoiceDate: row.invoiceDate,
         currency: row.currency,
-        followUpDate:row.followUpDate,
-        currentState:row.currentState,
-        remarksStatus:row.remarksStatus,
-        studentRemarks:row.enrolledStudentRemarks
+        followUpDate: row.followUpDate,
+        currentState: row.currentState,
+        remarksStatus: row.remarksStatus,
+        studentRemarks: row.enrolledStudentRemarks,
       };
       row.enrolledInfo = enrolledData;
     }
@@ -749,7 +774,7 @@ function mapResponse(res, rows) {
         let element = {
           requestedCourse: row.requestedCourse,
           preferredCountry: row.preferredCountry,
-          intEduLevel:row.intEduLevel,
+          intEduLevel: row.intEduLevel,
         };
         requestedCourseDetails.push(element);
         row.requestedCourseDetails = requestedCourseDetails;
@@ -761,7 +786,7 @@ function mapResponse(res, rows) {
         let element = {
           requestedCourse: row.requestedCourse,
           preferredCountry: row.preferredCountry,
-          intEduLevel:row.intEduLevel,
+          intEduLevel: row.intEduLevel,
         };
         row = hashmap.get(masterKey);
         requestedCourseDetails = row.requestedCourseDetails;
@@ -784,9 +809,9 @@ function mapResponse(res, rows) {
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
           primaryLanguage: row.primaryLanguage,
-          city:row.city,
+          city: row.city,
           province: row.province,
-          zipCode: row.zipCode
+          zipCode: row.zipCode,
         };
         educationDetails.push(element);
         row.educationDetails = educationDetails;
@@ -805,9 +830,9 @@ function mapResponse(res, rows) {
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
           primaryLanguage: row.primaryLanguage,
-          city:row.city,
+          city: row.city,
           province: row.province,
-          zipCode: row.zipCode
+          zipCode: row.zipCode,
         };
         row = hashmap.get(masterKey);
         educationDetails = row.educationDetails;
@@ -872,10 +897,10 @@ function mapResponse(res, rows) {
           visaApplnPrcDate: row.visaApplnPrcDate,
           visaApRjDate: row.visaApRjDate,
           travelDate: row.travelDate,
-          followUpDate:row.followUpDate,
-          currentState:row.currentState,
-          remarksStatus:row.remarksStatus,
-          studentRemarks:row.proposalStudentRemarks,
+          followUpDate: row.followUpDate,
+          currentState: row.currentState,
+          remarksStatus: row.remarksStatus,
+          studentRemarks: row.proposalStudentRemarks,
           applicationDetails: [
             {
               applnId: row.applnId,
@@ -908,10 +933,10 @@ function mapResponse(res, rows) {
           visaApplnPrcDate: row.visaApplnPrcDate,
           visaApRjDate: row.visaApRjDate,
           travelDate: row.travelDate,
-          followUpDate:row.followUpDate,
-          currentState:row.currentState,
-          remarksStatus:row.remarksStatus,
-          studentRemarks:row.proposalStudentRemarks,
+          followUpDate: row.followUpDate,
+          currentState: row.currentState,
+          remarksStatus: row.remarksStatus,
+          studentRemarks: row.proposalStudentRemarks,
           applicationDetails: [
             {
               applnId: row.applnId,
@@ -1124,8 +1149,12 @@ router.route("/saveproposalinfo/").post((req, res) => {
           req.body.studentId,
           "Proposal"
         );
-        updateStudentFollowUpDetails(req,req.body.proposalInfo.followUpDate,
-          req.body.proposalInfo.currentState,req.body.proposalInfo.remarksStatus);
+        updateStudentFollowUpDetails(
+          req,
+          req.body.proposalInfo.followUpDate,
+          req.body.proposalInfo.currentState,
+          req.body.proposalInfo.remarksStatus
+        );
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1203,8 +1232,12 @@ router.route("/saveenrolledinfo/").post((req, res) => {
           req.body.studentId,
           "Enrolled"
         );
-        updateStudentFollowUpDetails(req,req.body.enrolledInfo.followUpDate,
-          req.body.enrolledInfo.currentState,req.body.enrolledInfo.remarksStatus);
+        updateStudentFollowUpDetails(
+          req,
+          req.body.enrolledInfo.followUpDate,
+          req.body.enrolledInfo.currentState,
+          req.body.enrolledInfo.remarksStatus
+        );
         connection.commit(function (err) {
           if (err) {
             connection.rollback(function () {
@@ -1224,6 +1257,9 @@ router.route("/validatephonenumber").post((req, res) => {
 
   queryPrefix = queryPrefix + " where phoneNumber=?";
   queryConditionValues.push(req.body.phoneNumber);
+
+  queryPrefix = queryPrefix + " AND studentId <> ?";
+  queryConditionValues.push(req.body.studentId);
 
   connection.beginTransaction(function (err) {
     if (err) {
@@ -1255,6 +1291,9 @@ router.route("/validateemail").post((req, res) => {
   queryPrefix = queryPrefix + " where email=?";
   queryConditionValues.push(req.body.email);
 
+  queryPrefix = queryPrefix + " AND studentId <> ?";
+  queryConditionValues.push(req.body.studentId);
+
   connection.beginTransaction(function (err) {
     if (err) {
       throw err;
@@ -1277,26 +1316,27 @@ router.route("/validateemail").post((req, res) => {
     });
   });
 });
-function updateStudentFollowUpDetails(req,followUpDate,currentState,remarksStatus){
-        let updateQueryPrefix = STUDENT_QUERY.UPDATE_STUDENT_FOLLOWUP_QUERY;
-        let queryUpdateValues = [];
-        
-        queryUpdateValues.push(convertToMySqlDate(followUpDate));
-        queryUpdateValues.push(currentState);
-        queryUpdateValues.push(remarksStatus);
-        queryUpdateValues.push(req.body.studentId);
-        
-        connection.query(
-          updateQueryPrefix,
-          queryUpdateValues,
-          (err, rows) => {
-            if (err) {
-              console.log("ERROR CONNECTING TO STUDENT : " + err);
-              return connection.rollback(function () {
-                throw err;
-              });
-            }
-          }
-        );
+function updateStudentFollowUpDetails(
+  req,
+  followUpDate,
+  currentState,
+  remarksStatus
+) {
+  let updateQueryPrefix = STUDENT_QUERY.UPDATE_STUDENT_FOLLOWUP_QUERY;
+  let queryUpdateValues = [];
+
+  queryUpdateValues.push(convertToMySqlDate(followUpDate));
+  queryUpdateValues.push(currentState);
+  queryUpdateValues.push(remarksStatus);
+  queryUpdateValues.push(req.body.studentId);
+
+  connection.query(updateQueryPrefix, queryUpdateValues, (err, rows) => {
+    if (err) {
+      console.log("ERROR CONNECTING TO STUDENT : " + err);
+      return connection.rollback(function () {
+        throw err;
+      });
+    }
+  });
 }
 module.exports = router;
