@@ -334,8 +334,8 @@ router.route("/getstudent").post((req, res) => {
 
   if (req.body.firstName) {
     let firstName = req.body.firstName ? req.body.firstName.toLowerCase() : "";
-    queryConditions = queryConditions + " AND STD.firstName= ?";
-    queryConditionValues.push(firstName);
+    queryConditions = queryConditions + " AND STD.firstName LIKE ?";
+    queryConditionValues.push(firstName+'%');
   }
 
   if (req.body.status) {
@@ -370,8 +370,8 @@ router.route("/getstudent").post((req, res) => {
     queryConditionValues.push(req.body.studentId);
   }
   if (req.body.source) {
-    queryConditions = queryConditions + " AND OFF.source= ?";
-    queryConditionValues.push(req.body.source);
+    queryConditions = queryConditions + " AND OFF.source LIKE ?";
+    queryConditionValues.push(req.body.source+'%');
   }
   queryConditions = queryConditions + " AND STD.officeCode= ?";
   queryConditionValues.push(req.user.officeCode);
