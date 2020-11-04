@@ -384,7 +384,7 @@ router.route("/getstudent").post((req, res) => {
 
   queryConditions =
     queryConditions +
-    " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
+    " ORDER BY REM.toDoFollowUpSerNum,COU.intrId,PRO.proposalId,EDUHIS.eduHisId,studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
@@ -925,7 +925,7 @@ function mapResponse(res, rows) {
         proposalIntCourMap.set(proposalKey, row);
         proposalHashmap.set(masterKey, row);
       }
-    } else if (row.proposalId > 1 && !proposalIntCourMap.has(proposalKey)) {
+    } if (row.proposalId > 1 && !proposalIntCourMap.has(proposalKey)) {
       if (row.appldUnvsty) {
         let element = {
           visaApplnStatus: row.visaApplnStatus,
@@ -963,7 +963,7 @@ function mapResponse(res, rows) {
         proposalIntCourMap.set(proposalKey, row);
         proposalHashmap.set(masterKey, row);
       }
-    } else if (
+    } if (
       row.toDoFollowUpSerNum > 0 &&
       !proposalToDoFollowUpMap.has(toDoFollowUpRemarksKey) &&
       row.screenName === "Proposal"
@@ -991,7 +991,7 @@ function mapResponse(res, rows) {
       }
       proposalToDoFollowUpMap.set(toDoFollowUpRemarksKey, existingRow);
       proposalHashmap.set(masterKey, existingRow);
-    } else if (
+    } if (
       row.toDoFollowUpSerNum > 0 &&
       !proposalToDoFollowUpMap.has(toDoFollowUpRemarksKey) &&
       row.screenName === "Enrolled"
