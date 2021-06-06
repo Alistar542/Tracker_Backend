@@ -1399,7 +1399,7 @@ router.route("/findstudentsummarydetails").post((req, res) => {
 
   queryConditions =
     queryConditions +
-    " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
+    " ORDER BY studentId DESC";
   let finalCondition = queryPrefix + queryConditions;
 
   connection.query(finalCondition, queryConditionValues, (err, rows) => {
