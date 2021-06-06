@@ -334,6 +334,11 @@ router.route("/getstudent").post((req, res) => {
   let queryPrefix = STUDENT_QUERY.FIND_STUDENT_QUERY;
   let queryConditions = "";
   let queryConditionValues = [];
+  if (req.body.studentId) {
+    queryConditions = queryConditions + " AND STD.studentId= ?";
+    queryConditionValues.push(req.body.studentId);
+  }
+
   if (req.body.followUpDate) {
     queryConditions = queryConditions + " AND DATE(followUpDate)= ?";
     queryConditionValues.push(convertToMySqlDate(req.body.followUpDate));
@@ -1339,4 +1344,94 @@ function updateStudentFollowUpDetails(
     }
   });
 }
+
+router.route("/findstudentsummarydetails").post((req, res) => {
+  let queryPrefix = STUDENT_QUERY.FIND_STUDENT_SUMMARY_QUERY;
+  let queryConditions = "";
+  let queryConditionValues = [];
+  if (req.body.followUpDate) {
+    queryConditions = queryConditions + " AND DATE(followUpDate)= ?";
+    queryConditionValues.push(convertToMySqlDate(req.body.followUpDate));
+  }
+
+  if (req.body.firstName) {
+    let firstName = req.body.firstName ? req.body.firstName.toLowerCase() : "";
+    queryConditions = queryConditions + " AND STD.firstName LIKE ?";
+    queryConditionValues.push(firstName + "%");
+  }
+
+  if (req.body.status) {
+    queryConditions = queryConditions + " AND STD.status= ?";
+    queryConditionValues.push(req.body.status);
+  }
+
+  if (req.body.phoneNumber) {
+    queryConditions = queryConditions + " AND STD.phoneNumber= ?";
+    queryConditionValues.push(req.body.phoneNumber);
+  }
+
+  if (req.body.priority) {
+    queryConditions = queryConditions + " AND OFF.priority= ?";
+    queryConditionValues.push(req.body.priority);
+  }
+  if (req.body.creationFromDate && req.body.creationToDate) {
+    queryConditions = queryConditions + " AND STD.createdDate BETWEEN ? AND ?";
+    queryConditionValues.push(
+      convertToMySqlDateTime(req.body.creationFromDate)
+    );
+    queryConditionValues.push(convertToMySqlDateTime(req.body.creationToDate));
+  } else if (req.body.creationFromDate) {
+    queryConditions = queryConditions + " AND STD.createdDate > ?";
+    queryConditionValues.push(
+      convertToMySqlDateTime(req.body.creationFromDate)
+    );
+  }
+  if (req.body.studentId) {
+    queryConditions = queryConditions + " AND STD.studentId= ?";
+    queryConditionValues.push(req.body.studentId);
+  }
+  if (req.body.source) {
+    queryConditions = queryConditions + " AND OFF.source LIKE ?";
+    queryConditionValues.push(req.body.source + "%");
+  }
+  queryConditions = queryConditions + " AND STD.officeCode= ?";
+  queryConditionValues.push(req.user.officeCode);
+
+  queryConditions =
+    queryConditions +
+    " ORDER BY COU.intrId,PRO.proposalId,REM.toDoFollowUpSerNum,EDUHIS.eduHisId,studentId DESC";
+  let finalCondition = queryPrefix + queryConditions;
+
+  connection.query(finalCondition, queryConditionValues, (err, rows) => {
+    err
+      ? console.log("ERROR CONNECTING TO STUDENT : " + err)
+      : mapSummaryResponse(res, rows);
+  });
+});
+
+const mapSummaryResponse = (res,rows) => {
+  let result = null;
+  let studentMap = new HashMap();
+  if(rows && rows.length > 0) {
+    result = [];
+    rows.forEach((row,index) => {
+      if(!studentMap.has(row.studentId)){
+        result.push({
+          studentId : row.studentId,
+          firstName:  row.firstName,
+          middleName: row.middleName,
+          lastName:row.lastName,
+          status : row.status,
+          source : row.source,
+          priority : row.priority,
+          currentState : row.currentState
+        })
+        studentMap.set(row.studentId,10)
+      }
+      
+    })
+  } 
+  return res.json(result);
+}
+
 module.exports = router;

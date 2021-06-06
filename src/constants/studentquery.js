@@ -113,3 +113,18 @@ degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,
 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_EDUCATION_HISTORY=`DELETE FROM educationhistory WHERE studentId=?`
+
+exports.FIND_STUDENT_SUMMARY_QUERY = `SELECT 
+    STD.studentId,STD.firstName,STD.middleName,STD.lastName,STD.status,STD.priority,
+    STD.phoneNumber,STD.currentState,OFF.source
+    FROM student STD
+    LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
+    LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
+    LEFT JOIN workexperience WRK ON STD.studentId=WRK.studentId
+    LEFT JOIN officedata OFF ON STD.studentId=OFF.studentId
+    LEFT JOIN interestedcourses COU ON STD.studentId=COU.studentId  
+    LEFT JOIN todofollowupremarks REM ON STD.studentId=REM.studentId
+    LEFT JOIN proposal PRO ON STD.studentId=PRO.studentId
+    LEFT JOIN enrolled ENR ON STD.studentId=ENR.studentId
+    LEFT JOIN educationhistory EDUHIS ON STD.studentId=EDUHIS.studentId
+    WHERE 1=1`;
