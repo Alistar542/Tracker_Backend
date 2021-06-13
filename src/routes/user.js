@@ -4,6 +4,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const connection = require("../../connection/connection");
 const USER_QUERY = require("../constants/userquery");
+var HashMap = require("hashmap");
 
 router.route("/login").post(async (req, res) => {
   let queryPrefix = USER_QUERY.LOGIN_USER_QUERY;
@@ -75,5 +76,20 @@ router.route("/create").post(async (req, res) => {
     }
   });
 });
+
+router.route("/listusers").get(async (req, res) => {
+  let queryPrefix = USER_QUERY.LIST_USER_QUERY;
+  let queryFilterValues = [];
+  let user = {};
+  connection.query(queryPrefix, queryFilterValues, async (err, rows) => {
+    err ? console.log("ERROR GETTING USER DETAILS: " + err) :
+    mapUsersResponse(res, rows);  
+  });
+});
+
+const mapUsersResponse = (res,rows) => {
+    
+  return res.json(rows);
+}
 
 module.exports = router;

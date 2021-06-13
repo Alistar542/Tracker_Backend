@@ -116,7 +116,14 @@ exports.DELETE_EDUCATION_HISTORY=`DELETE FROM educationhistory WHERE studentId=?
 
 exports.FIND_STUDENT_SUMMARY_QUERY = `SELECT 
     STD.studentId,STD.firstName,STD.middleName,STD.lastName,STD.status,STD.priority,STD.followUpDate,
-    STD.phoneNumber,STD.currentState,OFF.source
+    STD.phoneNumber,OFF.source,
+    CASE
+        WHEN STD.status ='N' THEN STD.studentRemarks
+        WHEN STD.status ='E' THEN (SELECT DISTINCT studentRemarks FROM enrolled ENR
+        WHERE ENR.studentId=STD.studentId)
+        WHEN STD.status ='E' THEN (SELECT DISTINCT studentRemarks FROM proposal PRP
+          WHERE PRP.studentId=STD.studentId)
+    END AS currentState
     FROM student STD
     LEFT JOIN officedata OFF ON STD.studentId=OFF.studentId
     WHERE 1=1`;
