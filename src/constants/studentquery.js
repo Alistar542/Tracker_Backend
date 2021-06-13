@@ -121,7 +121,7 @@ exports.FIND_STUDENT_SUMMARY_QUERY = `SELECT
         WHEN STD.status ='N' THEN STD.studentRemarks
         WHEN STD.status ='E' THEN (SELECT DISTINCT studentRemarks FROM enrolled ENR
         WHERE ENR.studentId=STD.studentId)
-        WHEN STD.status ='E' THEN (SELECT DISTINCT studentRemarks FROM proposal PRP
+        WHEN STD.status ='P' THEN (SELECT DISTINCT studentRemarks FROM proposal PRP
           WHERE PRP.studentId=STD.studentId)
     END AS currentState
     FROM student STD
