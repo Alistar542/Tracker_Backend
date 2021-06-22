@@ -1132,7 +1132,7 @@ router.route("/saveproposalinfo/").post((req, res) => {
             convertToMySqlDateTime(req.body.proposalInfo.travelDate)
           );
           insertQueryUpdateValues.push(
-            convertToMySqlDateTime(req.body.proposalInfo.studentRemarks)
+            req.body.proposalInfo.studentRemarks
           );
           connection.query(
             insertQueryPrefix,
@@ -1214,7 +1214,7 @@ router.route("/saveenrolledinfo/").post((req, res) => {
           convertToMySqlDateTime(req.body.enrolledInfo.invoiceDate)
         );
         insertQueryUpdateValues.push(
-          convertToMySqlDateTime(req.body.enrolledInfo.studentRemarks)
+          req.body.enrolledInfo.studentRemarks
         );
 
         connection.query(
