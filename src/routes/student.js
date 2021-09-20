@@ -20,10 +20,10 @@ router.route("/add").post((req, res) => {
     englishExamQueryPrefix,
   } = populateEnglistExamDetails(req);
 
-  let {
-    educationQueryInsertValues,
-    educationQueryPrefix,
-  } = populateEducationDetails(req);
+  // let {
+  //   educationQueryInsertValues,
+  //   educationQueryPrefix,
+  // } = populateEducationDetails(req);
 
   let {
     workExperienceQueryInsertValues,
@@ -62,19 +62,19 @@ router.route("/add").post((req, res) => {
             }
           }
         );
-        educationQueryInsertValues[0] = rows.insertId;
-        connection.query(
-          educationQueryPrefix,
-          educationQueryInsertValues,
-          (err, rows) => {
-            if (err) {
-              console.log("ERROR CONNECTING TO EDUCATION : " + err);
-              return connection.rollback(function () {
-                throw err;
-              });
-            }
-          }
-        );
+        //educationQueryInsertValues[0] = rows.insertId;
+        // connection.query(
+        //   educationQueryPrefix,
+        //   educationQueryInsertValues,
+        //   (err, rows) => {
+        //     if (err) {
+        //       console.log("ERROR CONNECTING TO EDUCATION : " + err);
+        //       return connection.rollback(function () {
+        //         throw err;
+        //       });
+        //     }
+        //   }
+        // );
         workExperienceQueryInsertValues[0] = rows.insertId;
         connection.query(
           workExperienceQueryPrefix,
@@ -167,18 +167,18 @@ router.route("/update/:id").post((req, res) => {
   englishExamQueryInsertValues.push(req.body.speaking);
   englishExamQueryInsertValues.push(req.params.id);
 
-  let educationQueryPrefix = STUDENT_QUERY.UPDATE_EDUCATION_QUERY;
-  let educationQueryInsertValues = [];
-  educationQueryInsertValues[0] = req.params.id;
-  educationQueryInsertValues.push(req.body.countryOfEducation);
-  educationQueryInsertValues.push(req.body.highestLevelOfEducation);
-  educationQueryInsertValues.push(req.body.gradingScheme);
-  educationQueryInsertValues.push(req.body.gradeAverage);
-  educationQueryInsertValues.push(
-    convertToMySqlDateTime(req.body.graduatedYear)
-  );
-  educationQueryInsertValues.push(req.body.eduCourseType);
-  educationQueryInsertValues.push(req.params.id);
+  // let educationQueryPrefix = STUDENT_QUERY.UPDATE_EDUCATION_QUERY;
+  // let educationQueryInsertValues = [];
+  // educationQueryInsertValues[0] = req.params.id;
+  // educationQueryInsertValues.push(req.body.countryOfEducation);
+  // educationQueryInsertValues.push(req.body.highestLevelOfEducation);
+  // educationQueryInsertValues.push(req.body.gradingScheme);
+  // educationQueryInsertValues.push(req.body.gradeAverage);
+  // educationQueryInsertValues.push(
+  //   convertToMySqlDateTime(req.body.graduatedYear)
+  // );
+  // educationQueryInsertValues.push(req.body.eduCourseType);
+  // educationQueryInsertValues.push(req.params.id);
 
   let workExperienceQueryPrefix = STUDENT_QUERY.UPDATE_WORK_EXPERIENCE_QUERY;
   let workExperienceQueryInsertValues = [];
@@ -226,18 +226,18 @@ router.route("/update/:id").post((req, res) => {
           }
         }
       );
-      connection.query(
-        educationQueryPrefix,
-        educationQueryInsertValues,
-        (err, rows) => {
-          if (err) {
-            console.log("ERROR CONNECTING TO Education : " + err);
-            return connection.rollback(function () {
-              throw err;
-            });
-          }
-        }
-      );
+      // connection.query(
+      //   educationQueryPrefix,
+      //   educationQueryInsertValues,
+      //   (err, rows) => {
+      //     if (err) {
+      //       console.log("ERROR CONNECTING TO Education : " + err);
+      //       return connection.rollback(function () {
+      //         throw err;
+      //       });
+      //     }
+      //   }
+      // );
       connection.query(
         workExperienceQueryPrefix,
         workExperienceQueryInsertValues,
@@ -601,6 +601,13 @@ function populateEducationalDetails(id, req) {
       educationHistoryQueryValues.push(
         req.body.educationDetails[i].primaryLanguage
       );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].courseMajor
+      );
+      educationHistoryQueryValues.push(
+        req.body.educationDetails[i].gradingScheme
+      );
+      educationHistoryQueryValues.push(req.body.educationDetails[i].gradeAvg);
       educationHistoryQueryValues.push(req.body.educationDetails[i].city);
       educationHistoryQueryValues.push(req.body.educationDetails[i].province);
       educationHistoryQueryValues.push(req.body.educationDetails[i].zipCode);
@@ -674,20 +681,20 @@ function populateWorkExperienceDetails(req) {
   return { workExperienceQueryInsertValues, workExperienceQueryPrefix };
 }
 
-function populateEducationDetails(req) {
-  let educationQueryPrefix = STUDENT_QUERY.ADD_EDUCATION_QUERY;
-  let educationQueryInsertValues = [];
-  educationQueryInsertValues[0] = "studentId";
-  educationQueryInsertValues.push(req.body.countryOfEducation);
-  educationQueryInsertValues.push(req.body.highestLevelOfEducation);
-  educationQueryInsertValues.push(req.body.gradingScheme);
-  educationQueryInsertValues.push(req.body.gradeAverage);
-  educationQueryInsertValues.push(req.body.eduCourseType);
-  educationQueryInsertValues.push(
-    convertToMySqlDateTime(req.body.graduatedYear)
-  );
-  return { educationQueryInsertValues, educationQueryPrefix };
-}
+// function populateEducationDetails(req) {
+//   let educationQueryPrefix = STUDENT_QUERY.ADD_EDUCATION_QUERY;
+//   let educationQueryInsertValues = [];
+//   educationQueryInsertValues[0] = "studentId";
+//   educationQueryInsertValues.push(req.body.countryOfEducation);
+//   educationQueryInsertValues.push(req.body.highestLevelOfEducation);
+//   educationQueryInsertValues.push(req.body.gradingScheme);
+//   educationQueryInsertValues.push(req.body.gradeAverage);
+//   educationQueryInsertValues.push(req.body.eduCourseType);
+//   educationQueryInsertValues.push(
+//     convertToMySqlDateTime(req.body.graduatedYear)
+//   );
+//   return { educationQueryInsertValues, educationQueryPrefix };
+// }
 
 function populateEnglistExamDetails(req) {
   let englishExamQueryPrefix = STUDENT_QUERY.ADD_ENGLISH_EXAM_QUERY;
@@ -813,6 +820,9 @@ function mapResponse(res, rows) {
           educationLevel: row.educationLevel,
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
+          courseMajor: row.courseMajor,
+          gradingScheme: row.gradingScheme,
+          gradeAvg: row.gradeAvg,
           primaryLanguage: row.primaryLanguage,
           city: row.city,
           province: row.province,
@@ -834,6 +844,9 @@ function mapResponse(res, rows) {
           educationLevel: row.educationLevel,
           institutionCountry: row.institutionCountry,
           institutionName: row.institutionName,
+          courseMajor: row.courseMajor,
+          gradingScheme: row.gradingScheme,
+          gradeAvg: row.gradeAvg,
           primaryLanguage: row.primaryLanguage,
           city: row.city,
           province: row.province,

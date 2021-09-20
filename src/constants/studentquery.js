@@ -22,7 +22,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     STD.phoneNumber,STD.additionalPhNo,STD.followUpDate,STD.dateOfBirth,STD.createdDate,
     STD.lastUpdateUser,STD.lastUpdateTime,STD.officeCode,STD.currentState,STD.studentRemarks,STD.remarksStatus,EGX.overall,EGX.listening,EGX.reading,EGX.writing,EGX.speaking,
     EGX.englishExamType,EGX.examDate,EGX.examId,EDU.countryOfEducation,EDU.highestLevelOfEducation,EDU.gradingScheme,
-    EDU.gradeAverage,EDU.graduatedYear,EDU.eduCourseType,WRK.companyName,WRK.position,WRK.endDate,WRK.startDate,WRK.workAddress,OFF.source,OFF.wayOfContact,OFF.counselor,OFF.priority,OFF.dateOfRequest,
+    EDU.gradeAverage,EDU.graduatedYear,WRK.companyName,WRK.position,WRK.endDate,WRK.startDate,WRK.workAddress,OFF.source,OFF.wayOfContact,OFF.counselor,OFF.priority,OFF.dateOfRequest,
     COU.intrId,COU.requestedCourse,COU.preferredCountry,COU.intEduLevel,
     REM.toDoFollowUpSerNum,REM.toDoSerNum,REM.followUpSerNum,REM.remarks,REM.remarkType,REM.userName,REM.screenName,
     PRO.proposalId,PRO.applnId,PRO.appldUnvsty,PRO.appldCourse,PRO.appldCourseTyp,PRO.appldDate,PRO.offrLtrStatus,
@@ -31,7 +31,7 @@ exports.FIND_STUDENT_QUERY = `SELECT
     ENR.totalTutionFees,ENR.annualTutionFees,ENR.totalCommission,ENR.firstCommission,ENR.balanceCommission,ENR.courseStartingDate,
     ENR.nextInvoiceDate,ENR.invoiceDate,ENR.currency,ENR.studentRemarks enrolledStudentRemarks,
     EDUHIS.eduHisId,EDUHIS.address,EDUHIS.attendedFromDate,EDUHIS.attendedToDate,EDUHIS.degreeAwarded,EDUHIS.degreeAwardedOn,
-    EDUHIS.educationLevel, EDUHIS.institutionCountry, EDUHIS.institutionName,EDUHIS.primaryLanguage,EDUHIS.city,EDUHIS.province,EDUHIS.zipCode
+    EDUHIS.educationLevel, EDUHIS.institutionCountry, EDUHIS.institutionName,EDUHIS.primaryLanguage,EDUHIS.courseMajor,EDUHIS.gradingScheme,EDUHIS.gradeAvg,EDUHIS.city,EDUHIS.province,EDUHIS.zipCode
     FROM student STD
     LEFT JOIN englishexam EGX ON STD.studentId=EGX.studentId 
     LEFT JOIN education EDU ON STD.studentId=EDU.studentId 
@@ -109,8 +109,8 @@ exports.INSERT_ENROL_INFO=`INSERT INTO enrolled
 exports.DELETE_ENROL_INFO=`DELETE FROM enrolled WHERE studentId=?`
 
 exports.INSERT_EDUCATION_HISTORY=`INSERT INTO educationhistory(studentId,eduHisId,address,attendedFromDate,attendedToDate,
-degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,primaryLanguage,city,province,zipCode)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+degreeAwarded,degreeAwardedOn,educationLevel,institutionCountry,institutionName,primaryLanguage,courseMajor,gradingScheme,gradeAvg,city,province,zipCode)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 exports.DELETE_EDUCATION_HISTORY=`DELETE FROM educationhistory WHERE studentId=?`
 

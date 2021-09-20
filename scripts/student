@@ -222,3 +222,16 @@ ADD COLUMN `eduCourseType` VARCHAR(50) NULL AFTER `graduatedYear`;
 ALTER TABLE `student_tracker`.`interestedcourses` 
 ADD COLUMN `intEduLevel` VARCHAR(50) NULL AFTER `preferredCountry`;
 
+//Added on 12Sep2021
+
+ALTER TABLE `student_tracker`.`educationhistory` 
+ADD COLUMN `courseMajor` VARCHAR(50) NULL;
+
+ALTER TABLE `student_tracker`.`educationhistory` 
+ADD COLUMN `gradingScheme` VARCHAR(50) NULL;
+
+ALTER TABLE `student_tracker`.`educationhistory` 
+ADD COLUMN `gradeAvg` VARCHAR(20) NULL;
+
+ALTER TABLE `student_tracker`.`student`
+MODIFY `currentState` varchar(9000) NULL;
